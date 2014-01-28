@@ -32,7 +32,8 @@
             'Rally.ui.filter.view.TagPillFilter',
             'Rally.app.Message',
             'Rally.apps.iterationtrackingboard.Column',
-            'Rally.clientmetrics.ClientMetricsRecordable'
+            'Rally.clientmetrics.ClientMetricsRecordable',
+            'Rally.ui.grid.plugin.RealtimeUpdateListener'
         ],
         mixins: [
             'Rally.app.CardFieldSelectable',
@@ -70,6 +71,8 @@
         },
 
         _addGridBoard: function(compositeModel, treeGridModel) {
+            var gridConfig = this._getGridConfig(treeGridModel);
+
             var plugins = ['rallygridboardaddnew'],
                 context = this.getContext();
 
@@ -150,6 +153,11 @@
 
             if (context.isFeatureEnabled('ITERATION_TRACKING_CUSTOM_VIEWS')) {
                 plugins.push('rallygridboardcustomview');
+
+            if (true) {
+                plugins = ['rallyrealtimeupdatelistener'];
+                gridConfig.plugins = gridConfig.plugins ? gridConfig.plugins.concat(plugins) : plugins;
+                gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
             }
 
             if (context.isFeatureEnabled('SHOW_ARTIFACT_CHOOSER_ON_ITERATION_BOARDS') && !context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE')) {
@@ -161,13 +169,22 @@
             }
 
             this.gridBoardPlugins = plugins;
-            this._addGrid(this._getGridConfig(treeGridModel), this._getGridBoardModelNames(context, compositeModel));
+            this._addGrid(gridConfig, this._getGridBoardModelNames(context, compositeModel));
         },
 
         _addGrid: function(gridConfig, modelNames){
+
             var context = this.getContext();
+            var columnPlugins = [{
+                ptype: 'rallycolumnpolicy',
+                app: this
+            }];
 
             this.remove('gridBoard');
+
+            if (true) {
+                columnPlugins = columnPlugins.push('rallyrealtimeupdatelistener');
+            }
 
             this.gridboard = this.add({
                 itemId: 'gridBoard',
@@ -186,10 +203,7 @@
                         xtype: 'iterationtrackingboardcolumn',
                         additionalFetchFields: ['PortfolioItem'],
                         enableInfiniteScroll: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS'),
-                        plugins: [{
-                            ptype: 'rallycolumnpolicy',
-                            app: this
-                        }]
+                        plugins: columnPlugins
                     },
                     cardConfig: {
                         showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1
@@ -399,6 +413,10 @@
 
         _publishContentUpdatedNoDashboardLayout: function() {
             this.fireEvent('contentupdated', {dashboardLayout: false});
+        },
+
+        _filterRealtimeUpdate: function(records, changes) {
+            return true;
         }
     });
 })();
