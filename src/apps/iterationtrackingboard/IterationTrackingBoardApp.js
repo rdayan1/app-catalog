@@ -154,12 +154,6 @@
             if (context.isFeatureEnabled('ITERATION_TRACKING_CUSTOM_VIEWS')) {
                 plugins.push('rallygridboardcustomview');
 
-            if (true) {
-                plugins = ['rallyrealtimeupdatelistener'];
-                gridConfig.plugins = gridConfig.plugins ? gridConfig.plugins.concat(plugins) : plugins;
-                gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
-            }
-
             if (context.isFeatureEnabled('SHOW_ARTIFACT_CHOOSER_ON_ITERATION_BOARDS') && !context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE')) {
                 plugins.push({
                     ptype: 'rallygridboardartifacttypechooser',
@@ -182,8 +176,15 @@
 
             this.remove('gridBoard');
 
-            if (true) {
-                columnPlugins = columnPlugins.push('rallyrealtimeupdatelistener');
+            if (context.isFeatureEnabled('ITERATION_TRACKING_BOARD_REALTIME_UPDATES')) {
+                var realtimePlugin = 'rallyrealtimeupdatelistener',
+                    gridConfigPlugins = gridConfig.plugins || [];
+
+                gridConfigPlugins.push(realtimePlugin);
+                gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
+
+                columnConfig.realtimeFilterFn = this._filterRealtimeUpdate;
+                columnPlugins.push(realtimePlugin);
             }
 
             this.gridboard = this.add({
@@ -191,7 +192,7 @@
                 xtype: 'rallygridboard',
                 stateId: 'iterationtracking-gridboard',
                 context: context,
-                plugins: this.gridBoardPlugins,
+                plugins: this.plugins,
                 modelNames: modelNames,
                 cardBoardConfig: {
                     serverSideFiltering: context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE'),
@@ -206,7 +207,9 @@
                         plugins: columnPlugins
                     },
                     cardConfig: {
-                        showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1
+                        fields: this.getCardFieldNames(),
+                        showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
+                        showBlockedReason: true
                     },
                     listeners: {
                         filter: this._onBoardFilter,
