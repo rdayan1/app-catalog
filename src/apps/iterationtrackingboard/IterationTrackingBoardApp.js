@@ -166,6 +166,8 @@
             this._addGrid(gridConfig, this._getGridBoardModelNames(context, compositeModel));
         },
 
+        //Poorly named method. Rename once this is not on a branch.
+        //This method adds the gridboard, which can be displaying either the grid or the board.
         _addGrid: function(gridConfig, modelNames){
 
             var context = this.getContext();

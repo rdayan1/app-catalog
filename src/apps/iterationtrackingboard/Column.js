@@ -16,6 +16,19 @@
             }
 
             return filters;
+        },
+
+        /**
+         * These are only called for realtime creates, and Cardboard does not yet support realtime creates or associated record updates.
+         * See ObjectUpdateListener.
+         */
+        insertRecordIfShould: Ext.emptyFn,
+        updateAssociatedRecords: Ext.emptyFn,
+
+        updateExistingRecord: function(record) {
+            if (this.findCardInfo(record)) {
+                this.refreshCard(record);
+            }
         }
     });
 })();
