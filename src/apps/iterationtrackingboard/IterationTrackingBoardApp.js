@@ -194,7 +194,7 @@
                 xtype: 'rallygridboard',
                 stateId: 'iterationtracking-gridboard',
                 context: context,
-                plugins: this.plugins,
+                plugins: this.gridBoardPlugins,
                 modelNames: modelNames,
                 cardBoardConfig: {
                     serverSideFiltering: context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE'),
