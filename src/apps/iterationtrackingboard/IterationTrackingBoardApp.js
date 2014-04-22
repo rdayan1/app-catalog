@@ -71,8 +71,6 @@
         },
 
         _addGridBoard: function(compositeModel, treeGridModel) {
-            var gridConfig = this._getGridConfig(treeGridModel);
-
             var plugins = ['rallygridboardaddnew'],
                 context = this.getContext();
 
@@ -163,7 +161,7 @@
             }
 
             this.gridBoardPlugins = plugins;
-            this._addGrid(gridConfig, this._getGridBoardModelNames(context, compositeModel));
+            this._addGrid(this._getGridConfig(treeGridModel), this._getGridBoardModelNames(context, compositeModel));
         },
 
         //Poorly named method. Rename once this is not on a branch.
