@@ -130,13 +130,6 @@
                 }
             ]);
 
-            if (context.isFeatureEnabled('SHOW_ARTIFACT_CHOOSER_ON_ITERATION_BOARDS') && !context.isFeatureEnabled('F4359_FILTER')) {
-                plugins.push({
-                    ptype: 'rallygridboardartifacttypechooser',
-                    artifactTypePreferenceKey: 'artifact-types',
-                    showAgreements: true
-                });
-            }
             this.plugins = plugins;
             this._addGrid(this._getGridConfig(treeGridModel));
         },
