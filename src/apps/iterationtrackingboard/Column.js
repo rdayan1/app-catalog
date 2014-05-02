@@ -41,6 +41,6 @@
          * This is only called for realtime messages, and Cardboard does not yet support realtime associated record updates.
          * See ObjectUpdateListener.
          */
-        updateAssociatedRecords: Ext.emptyFn,
+        updateAssociatedRecords: Ext.emptyFn
     });
 })();

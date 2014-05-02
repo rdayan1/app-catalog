@@ -23,6 +23,7 @@
             'Rally.ui.gridboard.plugin.GridBoardFilterInfo',
             'Rally.ui.gridboard.plugin.GridBoardFilterControl',
             'Rally.ui.gridboard.plugin.GridBoardToggleable',
+            'Rally.ui.gridboard.plugin.RealtimeEventManager',
             'Rally.ui.grid.plugin.TreeGridExpandedRowPersistence',
             'Rally.ui.gridboard.plugin.GridBoardExpandAll',
             'Rally.ui.gridboard.plugin.GridBoardCustomView',
@@ -32,8 +33,7 @@
             'Rally.ui.filter.view.TagPillFilter',
             'Rally.app.Message',
             'Rally.apps.iterationtrackingboard.Column',
-            'Rally.clientmetrics.ClientMetricsRecordable',
-            'Rally.ui.grid.plugin.RealtimeUpdateListener'
+            'Rally.clientmetrics.ClientMetricsRecordable'
         ],
         mixins: [
             'Rally.app.CardFieldSelectable',
@@ -101,6 +101,7 @@
             }
 
             plugins.push('rallygridboardtoggleable');
+
             var alwaysSelectedValues = ['FormattedID', 'Name', 'Owner'];
             if (this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled) {
                 alwaysSelectedValues.push('DragAndDropRank');
@@ -185,14 +186,11 @@
             this.remove('gridBoard');
 
             if (context.isFeatureEnabled('ITERATION_TRACKING_BOARD_REALTIME_UPDATES')) {
-                var realtimePlugin = 'rallyrealtimeupdatelistener',
-                    gridConfigPlugins = gridConfig.plugins || [];
-
-                gridConfigPlugins.push(realtimePlugin);
-                gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
-
-                columnConfig.realtimeFilterFn = this._filterRealtimeUpdate;
-                columnPlugins.push(realtimePlugin);
+                this.gridBoardPlugins.push({
+                    ptype: 'rallyrealtimeeventmanager',
+                    indicatorEnabled: true,
+                    popoverEnabled: true
+                });
             }
 
             this.gridboard = this.add({
@@ -419,10 +417,6 @@
 
         _publishContentUpdatedNoDashboardLayout: function() {
             this.fireEvent('contentupdated', {dashboardLayout: false});
-        },
-
-        _filterRealtimeUpdate: function(records, changes) {
-            return true;
         }
     });
 })();
