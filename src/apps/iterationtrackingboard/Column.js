@@ -18,17 +18,29 @@
             return filters;
         },
 
-        /**
-         * These are only called for realtime creates, and Cardboard does not yet support realtime creates or associated record updates.
-         * See ObjectUpdateListener.
-         */
-        insertRecordIfShould: Ext.emptyFn,
-        updateAssociatedRecords: Ext.emptyFn,
-
         updateExistingRecord: function(record) {
             if (this.findCardInfo(record)) {
                 this.refreshCard(record);
             }
-        }
+        },
+
+        insertRecordIfShould: function(record) {
+            if (!this.findCardInfo(record) && this.isMatchingRecord(record)) {
+                this.createAndAddCard(record);
+            }
+        },
+
+        isMatchingRecord: function(record) {
+            if (_.isFunction(record.get)) {
+                return this.callParent(arguments);
+            }
+            return false;
+        },
+
+        /**
+         * This is only called for realtime messages, and Cardboard does not yet support realtime associated record updates.
+         * See ObjectUpdateListener.
+         */
+        updateAssociatedRecords: Ext.emptyFn,
     });
 })();

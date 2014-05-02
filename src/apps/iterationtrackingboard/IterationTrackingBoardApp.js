@@ -151,6 +151,7 @@
 
             if (context.isFeatureEnabled('ITERATION_TRACKING_CUSTOM_VIEWS')) {
                 plugins.push('rallygridboardcustomview');
+            }
 
             if (context.isFeatureEnabled('SHOW_ARTIFACT_CHOOSER_ON_ITERATION_BOARDS') && !context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE')) {
                 plugins.push({
@@ -170,9 +171,16 @@
 
             var context = this.getContext();
             var columnPlugins = [{
-                ptype: 'rallycolumnpolicy',
-                app: this
-            }];
+                    ptype: 'rallycolumnpolicy',
+                    app: this
+                }];
+
+            var columnConfig = {
+                xtype: 'iterationtrackingboardcolumn',
+                additionalFetchFields: ['PortfolioItem'],
+                enableInfiniteScroll: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS'),
+                plugins: columnPlugins
+            };
 
             this.remove('gridBoard');
 
@@ -200,12 +208,7 @@
                         {ptype: 'rallycardboardprinting', pluginId: 'print'},
                         {ptype: 'rallyfixedheadercardboard'}
                     ],
-                    columnConfig: {
-                        xtype: 'iterationtrackingboardcolumn',
-                        additionalFetchFields: ['PortfolioItem'],
-                        enableInfiniteScroll: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS'),
-                        plugins: columnPlugins
-                    },
+                    columnConfig: columnConfig,
                     cardConfig: {
                         fields: this.getCardFieldNames(),
                         showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
