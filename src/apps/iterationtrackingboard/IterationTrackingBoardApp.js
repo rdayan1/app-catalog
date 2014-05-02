@@ -189,7 +189,9 @@
                 this.gridBoardPlugins.push({
                     ptype: 'rallyrealtimeeventmanager',
                     indicatorEnabled: true,
-                    popoverEnabled: true
+                    popoverEnabled: true,
+                    ctrSelectorToAddIndicator: 'rallyleftright',
+                    indicatorStyle: {'float': 'right'}
                 });
             }
 
