@@ -191,7 +191,10 @@
                     indicatorEnabled: true,
                     popoverEnabled: true,
                     ctrSelectorToAddIndicator: 'rallyleftright',
-                    indicatorStyle: {'float': 'right'}
+                    indicatorStyle: {
+                        'float': 'right',
+                        'margin-top': '3px'
+                    }
                 });
             }
 
