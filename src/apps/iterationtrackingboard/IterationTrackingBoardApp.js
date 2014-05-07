@@ -286,6 +286,9 @@
                     listeners: {
                         filter: this._onBoardFilter,
                         filtercomplete: this._onBoardFilterComplete
+                    },
+                    storeConfig: {
+                        useShallowFetch: true
                     }
                 },
                 gridConfig: gridConfig,
