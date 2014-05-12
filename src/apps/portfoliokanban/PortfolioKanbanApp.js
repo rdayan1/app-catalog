@@ -336,8 +336,8 @@
                         columnConfig: {
                             xtype: 'rallycardboardcolumn',
                             additionalFetchFields: ['Discussion'],
-                            cardLimit: 50,
                             enableWipLimit: true,
+                            cardLimit: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS') ? 15 : 50,
                             enableInfiniteScroll: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS')
                         },
                         columns: columns,

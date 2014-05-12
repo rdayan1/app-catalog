@@ -76,7 +76,8 @@
             return Rally.apps.kanban.Settings.getFields({
                 shouldShowColumnLevelFieldPicker: this._shouldShowColumnLevelFieldPicker(),
                 defaultCardFields: this.getSetting('cardFields'),
-                isDndWorkspace: this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled
+                isDndWorkspace: this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled,
+                showPageSize: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS')
             });
         },
 
@@ -170,7 +171,8 @@
                     columnHeaderConfig: {
                         headerTpl: column || 'None'
                     },
-                    cardLimit: this.getSetting('pageSize'),
+                    // cardLimit config can be removed with ENABLE_INFINITE_SCROLL_ALL_BOARDS toggle, because we can use the default value
+                    cardLimit: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS') ? 15 : this.getSetting('pageSize'),
                     enableInfiniteScroll: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS'),
                     listeners: {
                         invalidfilter: {

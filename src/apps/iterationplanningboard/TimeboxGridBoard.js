@@ -66,6 +66,7 @@
                 columnConfig: {
                     xtype: 'iterationplanningboardappplanningcolumn',
                     additionalFetchFields: ['PortfolioItem'],
+                    cardLimit: Ext.isIE ? 25 : 100, // plan estimate rollups use client side data, so we need a lot of cards
                     enableInfiniteScroll: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS'),
                     storeConfig : {
                         fetch: ['Parent', 'Requirement']
@@ -96,11 +97,12 @@
         },
 
         _getColumnConfigs: function(timeboxes) {
-            // Note: Leave backlog card limit as undefined if infinite scroll is enabled.
             // When removing the infinite scroll toggle, card limit should probably be removed from here completely
             var backlogCardLimit;
 
-            if (!this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS')) {
+            if (this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS')) {
+                backlogCardLimit = 15;
+            } else {
                 backlogCardLimit = Ext.isIE ? 25 : 100;
             }
 
@@ -108,6 +110,7 @@
                 xtype: 'iterationplanningboardappbacklogcolumn',
                 flex: this._hasTimeboxes() ? 1 : 1/3,
                 cardLimit: backlogCardLimit,
+                enableInfiniteScroll: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS'),
                 columnHeaderConfig: {
                     headerTpl: 'Backlog'
                 }
@@ -116,6 +119,7 @@
             Ext.Array.each(timeboxes, function(timeboxRecords) {
                 columns.push({
                     timeboxRecords: timeboxRecords,
+                    enableInfiniteScroll: this.getContext().isFeatureEnabled('S64257_ENABLE_INFINITE_SCROLL_ALL_BOARDS'),
                     columnHeaderConfig: {
                         record: timeboxRecords[0],
                         fieldToDisplay: 'Name',
