@@ -5,11 +5,13 @@
         extend: 'Rally.ui.cardboard.Column',
         alias: 'widget.rallyteamcolumn',
         requires: [
+            'Rally.apps.teamboard.TeamBoardWorkInProgress',
             'Rally.ui.cardboard.plugin.ColumnCardCounter'
         ],
 
         plugins: [
-            {ptype: 'rallycolumncardcounter'}
+            {ptype: 'rallycolumncardcounter'},
+            {ptype: 'rallyteamboardworkinprogress'}
         ],
 
         initComponent: function(){
