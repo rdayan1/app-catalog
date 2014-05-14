@@ -6,20 +6,25 @@
         extend: 'Ext.AbstractPlugin',
         requires: ['Rally.ui.cardboard.plugin.CardContentRight', 'Rally.ui.combobox.IterationComboBox'],
 
+        inheritableStatics: {
+            _getProgressBarTpl: function() {
+                this.progressBarTpl = this.progressBarTpl || Ext.create('Rally.ui.renderer.template.progressbar.ProgressBarTemplate', {
+                    calculateColorFn: function(recordData) {
+                        return recordData.Load > 1 ? '#ec0000' : '#76c10f';
+                    },
+                    height: '14px',
+                    percentDoneName: 'Load',
+                    width: '60px'
+                });
+                return this.progressBarTpl;
+            }
+        },
+
         init: function(cmp) {
             this.callParent(arguments);
 
             this.cmp = cmp;
             this.cmp.on('storeload', this._onStoreLoad, this);
-
-            this.progressBarTpl = Ext.create('Rally.ui.renderer.template.progressbar.ProgressBarTemplate', {
-                calculateColorFn: function(recordData) {
-                    return recordData.Load > 1 ? '#ec0000' : '#76c10f';
-                },
-                height: '14px',
-                percentDoneName: 'Load',
-                width: '60px'
-            });
         },
 
         _onStoreLoad: function() {
@@ -63,7 +68,7 @@
 
                 var uicRecord = this._findUserIterationCapacityFor(card.getRecord(), userIterationCapacityRecords);
                 if(uicRecord){
-                    topEl.update(this.progressBarTpl.apply(uicRecord.data));
+                    topEl.update(this.self._getProgressBarTpl().apply(uicRecord.data));
                     bottomEl.update(this._getHasCapacityHtml(uicRecord));
                 }else{
                     topEl.update('');
