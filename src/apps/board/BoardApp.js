@@ -25,10 +25,15 @@
                 margin: '10px 0 0 0',
                 types: [this.getSetting('type')],
                 attribute: this.getSetting('groupByField'),
+                rows: {
+                    fieldName: 'c_Expedite',
+                    values: [true, false]
+                },
                 context: this.getContext(),
                 storeConfig: {
                     pageSize: this.getSetting('pageSize'),
-                    filters: this._getQueryFilters()
+                    filters: this._getQueryFilters(),
+                    groupDir: 'DESC'
                 },
                 cardConfig: {
                     editable: true,
