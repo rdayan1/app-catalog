@@ -13,6 +13,7 @@
         getHtml: function() {
             return '<td class="rui-card-right-side">' +
                     '<div class="' + Rally.ui.cardboard.plugin.CardContentRight.TOP_SIDE_CLS + '"></div>' +
+                    '<div class="' + Rally.ui.cardboard.plugin.CardContentRight.BOTTOM_SIDE_CLS + '"></div>' +
                    '</td>';
         }
     });

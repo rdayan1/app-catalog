@@ -46,25 +46,34 @@
                     limit: Infinity,
                     listeners: {
                         load: function(store, records){
-                            this._updateCapacities(records);
+                            this._updateCapacities(records, true);
                         },
                         scope: this
                     }
                 });
             }else{
-                this._updateCapacities([]);
+                this._updateCapacities([], false);
             }
         },
 
-        _updateCapacities: function(userIterationCapacityRecords) {
+        _updateCapacities: function(userIterationCapacityRecords, showSwipe) {
             _.each(this.cmp.getCards(), function(card){
-                var topRightEl = card.getEl().down('.' + Rally.ui.cardboard.plugin.CardContentRight.TOP_SIDE_CLS);
+                var topEl = card.getEl().down('.' + Rally.ui.cardboard.plugin.CardContentRight.TOP_SIDE_CLS);
+                var bottomEl = card.getEl().down('.' + Rally.ui.cardboard.plugin.CardContentRight.BOTTOM_SIDE_CLS);
 
-                var userIterationCapacityRecord = this._findUserIterationCapacityFor(card.getRecord(), userIterationCapacityRecords);
-                if(userIterationCapacityRecord){
-                    topRightEl.update(this.progressBarTpl.apply(userIterationCapacityRecord.data));
+                var uicRecord = this._findUserIterationCapacityFor(card.getRecord(), userIterationCapacityRecords);
+                if(uicRecord){
+                    topEl.update(this.progressBarTpl.apply(uicRecord.data));
+                    bottomEl.update(this._getHasCapacityHtml(uicRecord));
                 }else{
-                    topRightEl.update('');
+                    topEl.update('');
+                    bottomEl.update(showSwipe ? this._getAddCapacityHtml() : '');
+                }
+
+                if(showSwipe){
+                    card.getEl().addCls('rui-card-swipe');
+                }else{
+                    card.getEl().removeCls('rui-card-swipe');
                 }
             }, this);
         },
@@ -73,6 +82,14 @@
             return _.find(userIterationCapacityRecords, function(record){
                 return record.get('User')._ref === userRecord.get('_ref');
             });
+        },
+
+        _getHasCapacityHtml: function(record) {
+            return Ext.create('Rally.ui.renderer.template.CardPlanEstimateTemplate', record.get('Capacity'), 'Capacity').apply();
+        },
+
+        _getAddCapacityHtml: function() {
+            return Ext.create('Rally.ui.renderer.template.CardPlanEstimateTemplate', '+', 'Capacity', 'no-estimate').apply();
         }
     });
 })();
