@@ -28,3 +28,8 @@
     font-size: 15px;
     font-weight: normal;
 }
+
+.team-board-app .rui-card .rui-card-right-side {
+    padding-top: 5px;
+    width: 70px;
+}

@@ -10,10 +10,10 @@
             this.callParent(arguments);
 
             this.cmp = cmp;
-            this.cmp.on('afterrender', this._onAfterRender, this);
+            this.cmp.on('storeload', this._onStoreLoad, this);
         },
 
-        _onAfterRender: function() {
+        _onStoreLoad: function() {
             if(Rally.environment.getContext().getSubscription().isModuleEnabled('Rally Portfolio Manager')){
                 this.cmp.getColumnHeader().add({
                     xtype: 'container',
