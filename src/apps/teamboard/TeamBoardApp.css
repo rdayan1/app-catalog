@@ -1,6 +1,10 @@
-.team-board-app .cardboard .column-container .column-header .wip-container {
+.team-board-app .cardboard .column-container .column-header .team-board-iteration-scoper {
+    border-top: 1px dotted #c6c6c6;
+    padding: 5px;
+}
+
+.team-board-app .cardboard .column-container .column-header .team-board-iteration-scoper .wip-container {
     font-size: 14px;
-    padding: 2px;
     text-align: left;
 }
 

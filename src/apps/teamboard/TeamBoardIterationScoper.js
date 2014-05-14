@@ -50,21 +50,25 @@
 
         _onStoreLoad: function() {
             this.cmp.getColumnHeader().add({
-                xtype: 'rallyiterationcombobox',
-                allowNoEntry: true,
-                listeners: {
-                    ready: this._onIterationComboReady,
-                    scope: this
-                },
-                storeConfig: {
-                    context: {
-                        project: this.cmp.getValue()
-                    }
-                }
-            }, {
                 xtype: 'container',
-                cls: 'wip-container',
-                itemId: 'wipContainer'
+                cls: 'team-board-iteration-scoper',
+                items: [{
+                    xtype: 'rallyiterationcombobox',
+                    allowNoEntry: true,
+                    listeners: {
+                        ready: this._onIterationComboReady,
+                        scope: this
+                    },
+                    storeConfig: {
+                        context: {
+                            project: this.cmp.getValue()
+                        }
+                    }
+                }, {
+                    xtype: 'container',
+                    cls: 'wip-container',
+                    itemId: 'wipContainer'
+                }]
             });
         },
 
