@@ -4,7 +4,11 @@
     Ext.define('Rally.apps.teamboard.TeamBoardIterationScoper', {
         alias: 'plugin.rallyteamboarditerationscoper',
         extend: 'Ext.AbstractPlugin',
-        requires: ['Rally.ui.cardboard.plugin.CardContentRight', 'Rally.ui.combobox.IterationComboBox'],
+        requires: [
+            'Rally.ui.cardboard.plugin.CardContentRight',
+            'Rally.ui.combobox.IterationComboBox',
+            'Rally.util.DateTime'
+        ],
 
         inheritableStatics: {
             _getProgressBarTpl: function() {
@@ -40,25 +44,36 @@
                         project: this.cmp.getValue()
                     }
                 }
+            }, {
+                xtype: 'container',
+                cls: 'wip-container',
+                itemId: 'wipContainer'
             });
         },
 
         _onChange: function(combo, newValue){
             if(newValue){
-                combo.getStore().findRecord('_ref', newValue).getCollection('UserIterationCapacities', {
-                    autoLoad: true,
-                    fetch: 'Capacity,Load,TaskEstimates,User',
-                    limit: Infinity,
-                    listeners: {
-                        load: function(store, records){
-                            this._updateCapacities(records, true);
-                        },
-                        scope: this
-                    }
-                });
+                var iterationRecord = combo.getStore().findRecord('_ref', newValue);
+                this._updateWip(iterationRecord);
+                this._loadCapacities(iterationRecord);
             }else{
+                this._updateWip();
                 this._updateCapacities([], false);
             }
+        },
+
+        _loadCapacities: function(iterationRecord){
+            iterationRecord.getCollection('UserIterationCapacities', {
+                autoLoad: true,
+                fetch: 'Capacity,Load,TaskEstimates,User',
+                limit: Infinity,
+                listeners: {
+                    load: function(store, records){
+                        this._updateCapacities(records, true);
+                    },
+                    scope: this
+                }
+            });
         },
 
         _updateCapacities: function(userIterationCapacityRecords, showSwipe) {
@@ -95,6 +110,60 @@
 
         _getAddCapacityHtml: function() {
             return Ext.create('Rally.ui.renderer.template.CardPlanEstimateTemplate', '+', 'Capacity', 'no-estimate').apply();
+        },
+
+        _getWipContainer: function() {
+            return this.cmp.getColumnHeader().down('#wipContainer');
+        },
+
+        _updateWip: function(iterationRecord) {
+            this._getWipContainer().removeAll();
+
+            if(iterationRecord && Rally.environment.getContext().getSubscription().isModuleEnabled('Rally Portfolio Manager')){
+                this._loadWip(iterationRecord);
+            }
+        },
+
+        _loadWip: function(iterationRecord){
+            var store = Ext.create('Rally.data.wsapi.Store', {
+                context: {
+                    project: this.cmp.getValue(),
+                    projectScopeDown: false,
+                    projectScopeUp: false
+                },
+                fetch: 'FormattedID,Name',
+                filters: Rally.data.wsapi.Filter.and([
+                    {property: 'Project', value: this.cmp.getValue()},
+                    {property: 'Ordinal', value: 0},
+                    {property: 'ActualStartDate', operator: '<=', value: Rally.util.DateTime.toIsoString(iterationRecord.get('StartDate'))},
+                    Rally.data.wsapi.Filter.or([
+                        {property: 'ActualEndDate', operator: '>=', value: Rally.util.DateTime.toIsoString(iterationRecord.get('EndDate'))},
+                        {property: 'ActualEndDate', value: 'null'}
+                    ])
+                ]),
+                model: Ext.identityFn('PortfolioItem')
+            });
+            store.load({
+                callback: this._onWipLoaded,
+                scope: this
+            });
+        },
+
+        _onWipLoaded: function(wipRecords) {
+            if(wipRecords.length){
+                this._getWipContainer().add(
+                    _.map(wipRecords, function(record){
+                        return {
+                            xtype: 'component',
+                            cls: 'ellipses wip-item',
+                            html: Rally.util.DetailLink.getLink({
+                                record: record,
+                                text: record.get('FormattedID')
+                            }) + ': ' + record.get('Name')
+                        };
+                    })
+                );
+            }
         }
     });
 })();
