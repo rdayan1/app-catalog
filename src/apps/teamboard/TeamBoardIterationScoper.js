@@ -21,6 +21,23 @@
                     width: '60px'
                 });
                 return this.progressBarTpl;
+            },
+
+            _inProgressDuring: function(iterationRecord) {
+                return Rally.data.wsapi.Filter.and([
+                    {property: 'ActualStartDate', operator: '<=', value: Rally.util.DateTime.toIsoString(iterationRecord.get('EndDate'))},
+                    Rally.data.wsapi.Filter.or([
+                        {property: 'ActualEndDate', operator: '>=', value: Rally.util.DateTime.toIsoString(iterationRecord.get('StartDate'))},
+                        {property: 'ActualEndDate', value: 'null'}
+                    ])
+                ]);
+            },
+
+            _inProgressNow: function() {
+                return Rally.data.wsapi.Filter.and([
+                    {property: 'ActualStartDate', operator: '!=', value: 'null'},
+                    {property: 'ActualEndDate', value: 'null'}
+                ]);
             }
         },
 
@@ -36,7 +53,7 @@
                 xtype: 'rallyiterationcombobox',
                 allowNoEntry: true,
                 listeners: {
-                    change: this._onChange,
+                    ready: this._onIterationComboReady,
                     scope: this
                 },
                 storeConfig: {
@@ -51,13 +68,18 @@
             });
         },
 
+        _onIterationComboReady: function(combo) {
+            this._onChange(combo, combo.getValue());
+            combo.on('change', this._onChange, this);
+        },
+
         _onChange: function(combo, newValue){
             if(newValue){
                 var iterationRecord = combo.getStore().findRecord('_ref', newValue);
-                this._updateWip(iterationRecord);
+                this._loadWip(iterationRecord);
                 this._loadCapacities(iterationRecord);
             }else{
-                this._updateWip();
+                this._loadWip();
                 this._updateCapacities([], false);
             }
         },
@@ -116,15 +138,13 @@
             return this.cmp.getColumnHeader().down('#wipContainer');
         },
 
-        _updateWip: function(iterationRecord) {
+        _loadWip: function(iterationRecord){
+            if(!Rally.environment.getContext().getSubscription().isModuleEnabled('Rally Portfolio Manager')) {
+                return;
+            }
+
             this._getWipContainer().removeAll();
 
-            if(iterationRecord && Rally.environment.getContext().getSubscription().isModuleEnabled('Rally Portfolio Manager')){
-                this._loadWip(iterationRecord);
-            }
-        },
-
-        _loadWip: function(iterationRecord){
             var store = Ext.create('Rally.data.wsapi.Store', {
                 context: {
                     project: this.cmp.getValue(),
@@ -135,11 +155,7 @@
                 filters: Rally.data.wsapi.Filter.and([
                     {property: 'Project', value: this.cmp.getValue()},
                     {property: 'Ordinal', value: 0},
-                    {property: 'ActualStartDate', operator: '<=', value: Rally.util.DateTime.toIsoString(iterationRecord.get('StartDate'))},
-                    Rally.data.wsapi.Filter.or([
-                        {property: 'ActualEndDate', operator: '>=', value: Rally.util.DateTime.toIsoString(iterationRecord.get('EndDate'))},
-                        {property: 'ActualEndDate', value: 'null'}
-                    ])
+                    iterationRecord ? this.self._inProgressDuring(iterationRecord) : this.self._inProgressNow()
                 ]),
                 model: Ext.identityFn('PortfolioItem')
             });
