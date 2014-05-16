@@ -24,7 +24,7 @@
         onIterationComboReady: function(cmp, combo){
             this.callParent(arguments);
 
-            this.cmp.on('aftercarddroppedsave', function(){
+            this.cmp.on('cardupdated', function(){
                 this.showData(this.findIterationRecord(combo.getValue(), combo));
             }, this);
         },
