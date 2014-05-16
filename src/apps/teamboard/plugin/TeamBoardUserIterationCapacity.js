@@ -4,7 +4,7 @@
     Ext.define('Rally.apps.teamboard.plugin.TeamBoardUserIterationCapacity', {
         alias: 'plugin.rallyteamboarduseriterationcapacity',
         extend: 'Rally.apps.teamboard.plugin.TeamBoardIterationPlugin',
-        requires: ['Rally.ui.cardboard.plugin.CardContentRight'],
+        requires: ['Rally.data.wsapi.Filter', 'Rally.ui.cardboard.plugin.CardContentRight', 'Rally.ui.grid.Grid'],
 
         inheritableStatics: {
             _getProgressBarTpl: function() {
@@ -12,6 +12,7 @@
                     calculateColorFn: function(recordData) {
                         return recordData.Load > 1 ? '#ec0000' : '#76c10f';
                     },
+                    isClickable: true,
                     height: '14px',
                     percentDoneName: 'Load',
                     width: '60px'
@@ -32,7 +33,7 @@
             if(iterationRecord) {
                 iterationRecord.getCollection('UserIterationCapacities', {
                     autoLoad: true,
-                    fetch: 'Capacity,Load,TaskEstimates,User',
+                    fetch: 'Capacity,Iteration,Load,TaskEstimates,User',
                     limit: Infinity,
                     listeners: {
                         load: function (store, records) {
@@ -54,6 +55,10 @@
                 var uicRecord = this._findUserIterationCapacityFor(card.getRecord(), userIterationCapacityRecords);
                 if(uicRecord){
                     topEl.update(this.self._getProgressBarTpl().apply(uicRecord.data));
+                    topEl.on('click', function(e, targetEl){
+                        this._showTasksGrid(Ext.get(targetEl), uicRecord);
+                    }, this, {delegate: '.progress-bar-container'});
+
                     bottomEl.update(this._getHasCapacityHtml(uicRecord));
                 }else{
                     topEl.update('');
@@ -80,6 +85,29 @@
 
         _getAddCapacityHtml: function() {
             return Ext.create('Rally.ui.renderer.template.CardPlanEstimateTemplate', '+', 'Capacity', 'no-estimate').apply();
+        },
+
+        _showTasksGrid: function(target, uicRecord) {
+            Ext.create('Rally.ui.popover.Popover', {
+                items: [{
+                    xtype: 'rallygrid',
+                    columnCfgs: ['FormattedID', 'Name', 'Owner', 'State', 'Estimate', 'ToDo', 'Actuals', 'Blocked'],
+                    model: Ext.identityFn('Task'),
+                    storeConfig: {
+                        context: {
+                            project: this.cmp.getValue(),
+                            projectScopeDown: false,
+                            projectScopeUp: false
+                        },
+                        filters: Rally.data.wsapi.Filter.and([
+                            {property: 'Iteration', value: uicRecord.get('Iteration')._ref},
+                            {property: 'Owner', value: uicRecord.get('User')._ref}
+                        ])
+                    }
+                }],
+                target: target,
+                width: 700
+            });
         }
     });
 })();
