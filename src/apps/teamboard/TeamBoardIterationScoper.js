@@ -45,7 +45,13 @@
             this.callParent(arguments);
 
             this.cmp = cmp;
+            this.cmp.on('aftercarddroppedsave', this._afterCardDrop, this);
             this.cmp.on('storeload', this._onStoreLoad, this);
+        },
+
+        _afterCardDrop: function() {
+            var iterationCombo = this._down('#iterationCombo');
+            this._updateIterationScopedInfo(iterationCombo, iterationCombo.getValue());
         },
 
         _onStoreLoad: function() {
@@ -55,6 +61,7 @@
                 items: [{
                     xtype: 'rallyiterationcombobox',
                     allowNoEntry: true,
+                    itemId: 'iterationCombo',
                     listeners: {
                         ready: this._onIterationComboReady,
                         scope: this
@@ -73,13 +80,17 @@
         },
 
         _onIterationComboReady: function(combo) {
-            this._onChange(combo, combo.getValue());
-            combo.on('change', this._onChange, this);
+            this._updateIterationScopedInfo(combo, combo.getValue());
+            combo.on('change', this._onIterationComboChange, this);
         },
 
-        _onChange: function(combo, newValue){
-            if(newValue){
-                var iterationRecord = combo.getStore().findRecord('_ref', newValue);
+        _onIterationComboChange: function(combo, newValue){
+            this._updateIterationScopedInfo(combo, newValue);
+        },
+
+        _updateIterationScopedInfo: function(combo, iterationRef){
+            if(iterationRef){
+                var iterationRecord = combo.findRecordByValue(iterationRef);
                 this._loadWip(iterationRecord);
                 this._loadCapacities(iterationRecord);
             }else{
@@ -138,8 +149,8 @@
             return Ext.create('Rally.ui.renderer.template.CardPlanEstimateTemplate', '+', 'Capacity', 'no-estimate').apply();
         },
 
-        _getWipContainer: function() {
-            return this.cmp.getColumnHeader().down('#wipContainer');
+        _down: function(selector) {
+            return this.cmp.getColumnHeader().down(selector);
         },
 
         _loadWip: function(iterationRecord){
@@ -147,7 +158,7 @@
                 return;
             }
 
-            this._getWipContainer().removeAll();
+            this._down('#wipContainer').removeAll();
 
             var store = Ext.create('Rally.data.wsapi.Store', {
                 context: {
@@ -171,7 +182,7 @@
 
         _onWipLoaded: function(wipRecords) {
             if(wipRecords.length){
-                this._getWipContainer().add(
+                this._down('#wipContainer').add(
                     _.map(wipRecords, function(record){
                         return {
                             xtype: 'component',
