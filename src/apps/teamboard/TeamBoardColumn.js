@@ -5,6 +5,7 @@
         extend: 'Rally.ui.cardboard.Column',
         alias: 'widget.rallyteamcolumn',
         requires: [
+            'Rally.apps.teamboard.TeamBoardDropController',
             'Rally.apps.teamboard.TeamBoardIterationScoper',
             'Rally.ui.cardboard.plugin.ColumnCardCounter'
         ],
@@ -14,10 +15,10 @@
             {ptype: 'rallyteamboarditerationscoper'}
         ],
 
-        initComponent: function(){
-            this.callParent(arguments);
-
-            this.on('aftercarddroppedsave', this._onAfterCardDroppedSave, this);
+        config: {
+            dropControllerConfig: {
+                ptype: 'rallyteamboarddropcontroller'
+            }
         },
 
         assign: function(record){
@@ -34,25 +35,6 @@
 
         isMatchingRecord: function(record){
             return true;
-        },
-
-        doesRecordAttributeMatch: function(record, attribute, value) {
-            return true;
-        },
-
-        _onAfterCardDroppedSave: function(column, card, type, sourceColumn){
-            card.getRecord().getCollection(this.attribute, {
-                autoLoad: true,
-                limit: Infinity,
-                listeners: {
-                    load: function(store){
-                        store.add(column.getValue());
-                        store.remove(sourceColumn.getValue());
-                        store.sync();
-                    },
-                    scope: this
-                }
-            });
         }
     });
 
