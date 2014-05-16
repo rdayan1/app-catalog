@@ -70,6 +70,10 @@
         },
 
         _onIterationComboReady: function(combo) {
+            if (Rally.BrowserTest) {
+                Rally.BrowserTest.publishComponentReady(this);
+            }
+
             this.fireEvent('iterationcomboready', this, combo);
         }
     });

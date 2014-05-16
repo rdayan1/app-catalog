@@ -8,7 +8,7 @@
             this.callParent(arguments);
 
             this.cmp = cmp;
-            this.cmp.on('iterationcomboready', this.onIterationComboReady, this);
+            this.cmp.on('iterationcomboready', this.onIterationComboReady, this, {single: true});
         },
 
         findIterationRecord: function(ref, combo) {
