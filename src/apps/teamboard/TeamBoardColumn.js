@@ -6,19 +6,29 @@
         alias: 'widget.rallyteamcolumn',
         requires: [
             'Rally.apps.teamboard.TeamBoardDropController',
-            'Rally.apps.teamboard.TeamBoardIterationScoper',
-            'Rally.ui.cardboard.plugin.ColumnCardCounter'
+            'Rally.apps.teamboard.plugin.TeamBoardUserIterationCapacity',
+            'Rally.apps.teamboard.plugin.TeamBoardWip',
+            'Rally.ui.cardboard.plugin.ColumnCardCounter',
+            'Rally.ui.combobox.IterationComboBox'
         ],
 
         plugins: [
             {ptype: 'rallycolumncardcounter'},
-            {ptype: 'rallyteamboarditerationscoper'}
+            {ptype: 'rallyteamboardwip'},
+            {ptype: 'rallyteamboarduseriterationcapacity'}
         ],
 
         config: {
             dropControllerConfig: {
                 ptype: 'rallyteamboarddropcontroller'
             }
+        },
+
+        initComponent: function() {
+            this.callParent(arguments);
+
+            this.addEvents('iterationcomboready');
+            this.on('storeload', this._addIterationCombo, this);
         },
 
         assign: function(record){
@@ -35,6 +45,32 @@
 
         isMatchingRecord: function(record){
             return true;
+        },
+
+        _addIterationCombo: function() {
+            this.getColumnHeader().add({
+                xtype: 'container',
+                cls: 'team-board-iteration-section',
+                items: [{
+                    xtype: 'rallyiterationcombobox',
+                    allowNoEntry: true,
+                    listeners: {
+                        ready: this._onIterationComboReady,
+                        scope: this
+                    },
+                    storeConfig: {
+                        context: {
+                            project: this.getValue(),
+                            projectScopeDown: false,
+                            projectScopeUp: false
+                        }
+                    }
+                }]
+            });
+        },
+
+        _onIterationComboReady: function(combo) {
+            this.fireEvent('iterationcomboready', this, combo);
         }
     });
 
