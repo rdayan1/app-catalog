@@ -3,7 +3,7 @@
 
     Ext.define('Rally.apps.teamboard.plugin.TeamBoardWip', {
         alias: 'plugin.rallyteamboardwip',
-        extend: 'Rally.apps.teamboard.plugin.TeamBoardIterationPlugin',
+        extend: 'Rally.apps.teamboard.plugin.TeamBoardIterationAwarePlugin',
         requires: ['Rally.data.wsapi.Filter', 'Rally.util.DateTime'],
 
         inheritableStatics: {

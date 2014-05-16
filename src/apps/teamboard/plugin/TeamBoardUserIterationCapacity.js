@@ -3,7 +3,7 @@
 
     Ext.define('Rally.apps.teamboard.plugin.TeamBoardUserIterationCapacity', {
         alias: 'plugin.rallyteamboarduseriterationcapacity',
-        extend: 'Rally.apps.teamboard.plugin.TeamBoardIterationPlugin',
+        extend: 'Rally.apps.teamboard.plugin.TeamBoardIterationAwarePlugin',
         requires: ['Rally.data.wsapi.Filter', 'Rally.ui.cardboard.plugin.CardContentRight', 'Rally.ui.grid.Grid'],
 
         inheritableStatics: {
@@ -84,7 +84,7 @@
         },
 
         _getAddCapacityHtml: function() {
-            return Ext.create('Rally.ui.renderer.template.CardPlanEstimateTemplate', '+', 'Capacity', 'no-estimate').apply();
+            return Ext.create('Rally.ui.renderer.template.CardPlanEstimateTemplate', '--', 'Capacity', 'no-estimate').apply();
         },
 
         _showTasksGrid: function(target, uicRecord) {

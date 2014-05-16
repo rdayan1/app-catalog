@@ -1,7 +1,7 @@
 (function () {
     var Ext = window.Ext4 || window.Ext;
 
-    Ext.define('Rally.apps.teamboard.plugin.TeamBoardIterationPlugin', {
+    Ext.define('Rally.apps.teamboard.plugin.TeamBoardIterationAwarePlugin', {
         extend: 'Ext.AbstractPlugin',
 
         init: function(cmp) {
