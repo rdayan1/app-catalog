@@ -9,7 +9,6 @@
 
         requires: [
             'Rally.data.util.PortfolioItemHelper',
-            'Rally.apps.roadmapplanningboard.plugin.RoadmapScrollable',
             'Rally.apps.roadmapplanningboard.PlanningBoardColumn',
             'Rally.apps.roadmapplanningboard.TimeframePlanningColumn',
             'Rally.apps.roadmapplanningboard.BacklogBoardColumn',
@@ -26,12 +25,11 @@
             PREFERENCE_NAME: 'roadmapplanningboard.header.expanded'
         },
 
-        plugins: [{ptype: 'rallytimeframescrollablecardboard', timeframeColumnCount: 3}],
-
         config: {
             roadmap: null,
             timeline: null,
             isAdmin: false,
+            showHeader: true,
             storeConfig: {
                 useShallowFetch: true,
                 enablePostGet: true
@@ -120,12 +118,6 @@
             ddGroup: 'planningBoard',
             dropAllowed: "planningBoard",
             dropNotAllowed: "planningBoard",
-
-            /**
-             * @cfg {Boolean}
-             * Toggle whether the header is expanded or collapsed
-             */
-            showHeader: true,
 
             /**
              * @cfg {Object} Object containing Names and TypePaths of the lowest level portfolio item (eg: 'Feature') and optionally its parent (eg: 'Initiative')

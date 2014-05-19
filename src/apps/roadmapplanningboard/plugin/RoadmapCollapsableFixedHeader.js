@@ -17,15 +17,13 @@
         clientMetrics: [
             {
                 method: '_toggleHeaders',
-                descriptionProperty: '_getClickAction'
+                descriptionProperty: 'getCickActionDescription'
             }
         ],
 
-        showHeader: true,
-
         init: function (cmp) {
-            this.originalBuildColumns = cmp.buildColumns;
-            cmp.buildColumns = Ext.bind(this.buildColumns, this);
+            this.originalRenderColumns = cmp.renderColumns;
+            cmp.renderColumns = Ext.bind(this.renderColumns, this);
 
             this.callParent(arguments);
         },
@@ -34,21 +32,16 @@
             this._destroyHeaderButton();
         },
 
-        buildColumns: function (options) {
-            options = options || {};
-
+        renderColumns: function () {
             this._readPreference().then({
                 success: function () {
-                    this.originalBuildColumns.call(this.cmp, options)
+                    this.originalRenderColumns.call(this.cmp);
                     this._drawHeaderToggle();
                 },
                 scope: this
             });
         },
 
-        /**
-         * Draws the toggle button to expand/collapse the headers
-         */
         _drawHeaderToggle: function () {
             this._destroyHeaderButton();
 
@@ -65,7 +58,7 @@
         },
 
         _updateHeaderToggleButton: function () {
-            if(this.showHeader) {
+            if(this.cmp.showHeader) {
                 this._addHeaderToggleTooltip('Collapse header');
                 this.headerToggleButton.setIconCls('icon-chevron-up');
             } else {
@@ -91,16 +84,16 @@
         },
 
         _toggleHeaders: function () {
-            this.showHeader = !this.showHeader;
+            this.cmp.showHeader = !this.cmp.showHeader;
             this.headerToggleButton.hide();
             this._updateHeaderToggleButton();
             this._updateHeaderContainers().then({
                 success: function () {
-                    this.fireEvent('headersizechanged');
+                    this.cmp.fireEvent('headersizechanged', this.cmp);
                 },
                 scope: this
             });
-            this._savePreference(this.showHeader);
+            this._savePreference(this.cmp.showHeader);
         },
 
         _savePreference: function(val) {
@@ -122,18 +115,18 @@
             }).then({
                 success: function (result) {
                     var name = Rally.apps.roadmapplanningboard.PlanningBoard.PREFERENCE_NAME;
-                    this.cmp.showHeader = this.showHeader = !result.hasOwnProperty(name) || result[name] === 'true';
+                    this.cmp.showHeader = !result.hasOwnProperty(name) || result[name] === 'true';
                 },
                 scope: this
             });
         },
 
-        _getClickAction: function () {
-            return 'Roadmap header expansion toggled from [' + !this.showHeader + '] to [' + this.showHeader + ']';
+        getCickActionDescription: function () {
+            return 'Roadmap header expansion toggled from [' + !this.cmp.showHeader + '] to [' + this.cmp.showHeader + ']';
         },
 
         _updateHeaderContainers: function () {
-            var headerContainers = _.map(this.getEl().query('.roadmap-header-collapsable'), Ext.get);
+            var headerContainers = _.map(this.cmp.getEl().query('.roadmap-header-collapsable'), Ext.get);
             var promises = _.map(headerContainers, this._toggleHeaderContainer, this);
 
             return Deft.Promise.all(promises);
@@ -144,14 +137,14 @@
 
             el.removeCls('header-collapsed');
             el.animate({
-                duration: this.showHeader ? 1000 : 250,
+                duration: this.cmp.showHeader ? 1000 : 250,
                 to: {
-                    height: this.showHeader ? '100%' : '0',
-                    opacity: this.showHeader ? 1.0 : 0
+                    height: this.cmp.showHeader ? '100%' : '0',
+                    opacity: this.cmp.showHeader ? 1.0 : 0
                 },
                 listeners: {
                     afteranimate: function() {
-                        if (!this.showHeader) {
+                        if (!this.cmp.showHeader) {
                             el.addCls('header-collapsed');
                         }
                         deferred.resolve();
