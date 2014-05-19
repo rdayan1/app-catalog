@@ -319,8 +319,7 @@ describe 'Rally.apps.roadmapplanningboard.plugin.RoadmapScrollable', ->
 
     it 'should fill in all columns if none are provided', ->
       @createCardboard(timeframeColumnCount: 3, presentColumnCount: 0, pastColumnCount: 0).then =>
-        debugger
-        expect(@plugin.getScrollableColumns().length).toBe 3
+      expect(@plugin.getScrollableColumns().length).toBe 3
 
   describe 'add new column button', ->
 
