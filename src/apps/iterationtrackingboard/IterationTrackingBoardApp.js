@@ -32,7 +32,8 @@
             'Rally.ui.filter.view.TagPillFilter',
             'Rally.app.Message',
             'Rally.apps.iterationtrackingboard.Column',
-            'Rally.clientmetrics.ClientMetricsRecordable'
+            'Rally.clientmetrics.ClientMetricsRecordable',
+            'Rally.apps.iterationtrackingboard.StatsBanner'
         ],
 
         mixins: [
@@ -59,6 +60,7 @@
                 this.on('afterrender', this.onScopeChange, this, {single: true});
                 return;
             }
+            this._addStatsBanner();
             this._getGridStore().then({
                 success: function(gridStore) {
                     var model = gridStore.model;
@@ -99,6 +101,16 @@
                 };
 
             return Ext.create('Rally.data.wsapi.TreeStoreBuilder').build(config);
+        },
+
+        _addStatsBanner: function() {
+            this.remove('statsBanner');
+            this.add({
+                xtype: 'statsbanner',
+                itemId: 'statsBanner',
+                context: this.getContext(),
+                margin: '0 0 5px 0'
+            });
         },
 
         _addGridBoard: function (gridStore) {
