@@ -35,6 +35,7 @@
             'Deft.Deferred'
         ],
         layout: 'auto',
+        autoScroll: false,
         appName: 'Portfolio Kanban',
 
         cls: 'portfolio-kanban',

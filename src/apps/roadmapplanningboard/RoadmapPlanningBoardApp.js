@@ -16,8 +16,8 @@
             'Rally.clientmetrics.ClientMetricsRecordable',
             'Rally.util.BrowserValidation'
         ],
-        cls: 'roadmapPlanningBoardApp',
-        componentCls: 'app',
+        cls: 'roadmap-planning-board',
+        autoScroll: false,
         mixins: [
             'Rally.clientmetrics.ClientMetricsRecordable'
         ],
