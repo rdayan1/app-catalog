@@ -14,18 +14,18 @@
 
         tpl: [
             '<div class="expanded-widget">',
-                '<div class="stat-title">{type} End</div>',
-                '<div class="stat-metric">',
-                    '<div class="metric-chart"></div>',
-                    '<div class="metric-chart-text">',
-                        '{remaining}',
-                    '</div>',
-                    '<div class="metric-subtext">days left of {workdays}</div>',
-                '</div>',
+            '<div class="stat-title">{type} End</div>',
+            '<div class="stat-metric">',
+            '<div class="metric-chart"></div>',
+            '<div class="metric-chart-text">',
+            '{remaining}',
+            '</div>',
+            '<div class="metric-subtext">days left of {workdays}</div>',
+            '</div>',
             '</div>',
             '<div class="collapsed-widget">',
-                '<div class="stat-title">{type} End</div>',
-                '<div class="stat-metric">{remaining}<span class="stat-metric-secondary"> days</span></div>',
+            '<div class="stat-title">{type} End</div>',
+            '<div class="stat-metric">{remaining}<span class="stat-metric-secondary"> days</span></div>',
             '</div>'
         ],
 
@@ -39,12 +39,12 @@
 
         onDataChanged: function() {
             Deft.Promise.all([
-                this.getAcceptanceData(),
-                this.getTimeboxData()
-            ]).then({
-                success: this._onDataAssembled,
-                scope: this
-            });
+                    this.getAcceptanceData(),
+                    this.getTimeboxData()
+                ]).then({
+                    success: this._onDataAssembled,
+                    scope: this
+                });
         },
 
         getChartEl: function() {
@@ -53,7 +53,6 @@
 
         _getRenderData: function() {
             var data = _.merge(
-                this.callParent(),
                 {type: Ext.String.capitalize(this.getContext().getTimeboxScope().getType())},
                 this.acceptanceData,
                 this.timeboxData

@@ -11,18 +11,18 @@
 
         tpl: [
             '<div class="expanded-widget">',
-                '<div class="stat-title">Accepted</div>',
-                '<div class="stat-metric">',
-                    '<div class="metric-chart"></div>',
-                    '<div class="metric-chart-text percent-offset">',
-                        '{percentage}<div class="metric-percent">%</div>',
-                    '</div>',
-                '<div class="metric-subtext">{accepted} of {total} {unit}</div>',
-                '</div>',
+            '<div class="stat-title">Accepted</div>',
+            '<div class="stat-metric">',
+            '<div class="metric-chart"></div>',
+            '<div class="metric-chart-text percent-offset">',
+            '{percentage}<div class="metric-percent">%</div>',
+            '</div>',
+            '<div class="metric-subtext">{accepted} of {total} {unit}</div>',
+            '</div>',
             '</div>',
             '<div class="collapsed-widget">',
-                '<div class="stat-title">Accepted</div>',
-                '<div class="stat-metric">{percentage}<span class="metric-percent">%</span></div>',
+            '<div class="stat-title">Accepted</div>',
+            '<div class="stat-metric">{percentage}<span class="metric-percent">%</span></div>',
             '</div>'
         ],
 
@@ -37,12 +37,12 @@
 
         onDataChanged: function () {
             Deft.Promise.all([
-                this.getAcceptanceData(),
-                this.getTimeboxData()
-            ]).then({
-                success: this._onDataAssembled,
-                scope: this
-            });
+                    this.getAcceptanceData(),
+                    this.getTimeboxData()
+                ]).then({
+                    success: this._onDataAssembled,
+                    scope: this
+                });
         },
 
         getChartEl: function() {
@@ -57,7 +57,6 @@
 
         _getRenderData: function() {
             var data = _.merge(
-                this.callParent(),
                 {unit: this._getTimeboxUnits()},
                 this.acceptanceData,
                 this.timeboxData

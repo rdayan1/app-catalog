@@ -16,9 +16,6 @@
             'Rally.apps.iterationtrackingboard.statsbanner.IterationProgressDialog',
             'Ext.state.Manager'
         ],
-        mixins: {
-            stateful: 'Ext.state.Stateful'
-        },
 
         config: {
             context: null,
@@ -37,14 +34,14 @@
 
         tpl: [
             '<div class="expanded-widget">',
-                '<div class="stat-title"></div>',
-                '<div class="stat-metric">',
-                    '<div class="stat-carousel"></div>',
-                '</div>',
+            '<div class="stat-title"></div>',
+            '<div class="stat-metric">',
+            '<div class="stat-carousel"></div>',
+            '</div>',
             '</div>',
             '<div class="collapsed-widget">',
-                '<span class="metric-icon icon-pie"></span>',
-                '<div class="stat-title"></div>',
+            '<span class="metric-icon icon-pie"></span>',
+            '<div class="stat-title"></div>',
             '</div>'
         ],
 
@@ -55,7 +52,7 @@
 
         initComponent: function(){
             this.callParent(arguments);
-            this.store.on('datachanged', this.onDataChanged, this);
+            this.mon(this.store, 'datachanged', this.onDataChanged, this);
             var boundClickHandler = Ext.bind(this._onChartClick, this);
 
             this.carouselItems = [
@@ -162,11 +159,9 @@
             this._cleanupCarousel();
 
             if (this.getContext().getTimeboxScope().getRecord()) {
-                this.update(this._getRenderData());
+                this.update();
 
-                if (this.isExpanded()) {
-                    this.createCarousel();
-                }
+                this.createCarousel();
             } else {
                 this._addPlaceholder();
             }
@@ -192,7 +187,7 @@
             });
 
             if (!Ext.isIE8m){
-                 // if such next line runs IE8 or < goes boom! WOW!
+                // if such next line runs IE8 or < goes boom! WOW!
                 this.carousel.setCurrentItem(this.currentChartDisplayed);
             }
 
@@ -212,9 +207,9 @@
         },
 
         _addPlaceholder: function() {
-            this.update(this._getRenderData());
+            this.update();
 
-            if (this.isExpanded()) {
+            if (this.expanded) {
                 this.carousel = Ext.create('Ext.Container', {
                     renderTo: this.getEl().down('.stat-carousel'),
                     html: 'no iteration data'

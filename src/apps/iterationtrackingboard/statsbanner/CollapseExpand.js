@@ -11,26 +11,16 @@
 
         tpl: [
             '<div class="expanded-widget">',
-                '<div class="toggle-icon icon-chevron-up"></div>',
+            '<div class="toggle-icon icon-chevron-up"></div>',
             '</div>',
             '<div class="collapsed-widget">',
-                '<div class="toggle-icon icon-chevron-down"></div>',
+            '<div class="toggle-icon icon-chevron-down"></div>',
             '</div>'
         ],
 
         componentCls: 'collapse-expand',
 
-        initComponent: function () {
-            this.addEvents(
-                /**
-                 * @event
-                 * Fires when collapse or expand toggle is clicked
-                 */
-                'toggle'
-            );
-
-            this.callParent(arguments);
-        },
+        bubbleEvents: ['collapse', 'expand'],
 
         afterRender: function() {
             this.callParent(arguments);
@@ -39,10 +29,19 @@
         },
 
         _onCollapseExpandClick: function() {
-            this.fireEvent('toggle', this);
+            if (this.expanded) {
+                this.fireEvent('collapse', this);
+            } else {
+                this.fireEvent('expand', this);
+            }
         },
 
-        toggle: function() {
+        expand: function() {
+            this.callParent(arguments);
+            this.doComponentLayout();
+        },
+
+        collapse: function() {
             this.callParent(arguments);
             this.doComponentLayout();
         }

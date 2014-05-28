@@ -24,9 +24,12 @@
         layout: 'hbox',
         border: 0,
         width: '100%',
+        stateful: true,
+        stateEvents: ['expand', 'collapse'],
 
         config: {
-            context: null
+            context: null,
+            expanded: true
         },
 
         items: [
@@ -39,17 +42,34 @@
             {xtype: 'statsbannercollapseexpand', flex: 0}
         ],
 
+        constructor: function() {
+            this.stateId = Rally.environment.getContext().getScopedStateId('stats-banner');
+            this.callParent(arguments);
+        },
+
         initComponent: function() {
+            this.addEvents(
+                /**
+                 * @event
+                 * Fires when expand is clicked
+                 */
+                'expand',
+                /**
+                 * @event
+                 * Fires when collapse is clicked
+                 */
+                'collapse'
+            );
+
             this.subscribe(this, Rally.Message.objectDestroy, this._update, this);
             this.subscribe(this, Rally.Message.objectCreate, this._update, this);
             this.subscribe(this, Rally.Message.objectUpdate, this._update, this);
             this.subscribe(this, Rally.Message.bulkUpdate, this._update, this);
-            Ext.EventManager.onWindowResize(this.doLayout, this, {buffer: 250});
 
             this.store = Ext.create('Rally.data.wsapi.artifact.Store', {
                 models: ['User Story', 'Defect', 'Defect Suite', 'Test Set'],
                 fetch: ['Defects:summary[State;ScheduleState+Blocked]', 'PlanEstimate', 'Requirement', 'FormattedID', 'Name', 'Blocked', 'BlockedReason',
-                        'ScheduleState', 'State', 'Tasks:summary[State+Blocked]', 'TestCases'],
+                    'ScheduleState', 'State', 'Tasks:summary[State+Blocked]', 'TestCases'],
                 useShallowFetch: true,
                 filters: [this.context.getTimeboxScope().getQueryFilter()],
                 context: this.context.getDataContext(),
@@ -60,20 +80,49 @@
             //need to configure the items at the instance level, not the class level (i.e. don't use the 'defaults' config)
             this.items = this._configureItems(this.items);
 
+            this.on('expand', this._onExpand, this);
+            this.on('collapse', this._onCollapse, this);
             this.callParent(arguments);
 
             this._update();
         },
 
+        onRender: function() {
+            if (this.expanded) {
+                this.removeCls('collapsed');
+            } else {
+                this.addCls('collapsed');
+            }
+            this._setExpandedOnChildItems();
+            this.callParent(arguments);
+        },
+
+        applyState: function (state) {
+            if (Ext.isDefined(state.expanded)) {
+                this.setExpanded(state.expanded);
+            }
+            this._setExpandedOnChildItems();
+        },
+
+        getState: function(){
+            return {
+                expanded: this.expanded
+            };
+        },
+
+        _setExpandedOnChildItems: function() {
+            _.each(this.items.getRange(), function(item) {
+                item.setExpanded(this.expanded);
+            }, this);
+        },
+
         _getItemDefaults: function() {
             return {
-                cls: 'stat-panel',
                 flex: 1,
                 context: this.context,
                 store: this.store,
                 listeners: {
                     ready: this._onReady,
-                    toggle: this._onToggle,
                     scope: this
                 }
             };
@@ -87,10 +136,18 @@
             }
         },
 
-        _onToggle: function() {
-            this.getEl().toggleCls('collapsed');
+        _onCollapse: function() {
+            this.addCls('collapsed');
+            this.setExpanded(false);
 
-            _.invoke(this.items.getRange(), 'toggle');
+            _.invoke(this.items.getRange(), 'collapse');
+        },
+
+        _onExpand: function() {
+            this.removeCls('collapsed');
+            this.setExpanded(true);
+
+            _.invoke(this.items.getRange(), 'expand');
         },
 
         _hasTimebox: function() {
@@ -109,12 +166,6 @@
             if(this._hasTimebox()) {
                 this.store.load();
             }
-        },
-
-        beforeDestroy: function() {
-            Ext.EventManager.removeResizeListener(this.doLayout, this);
-
-            this.callParent(arguments);
         }
     });
 })();

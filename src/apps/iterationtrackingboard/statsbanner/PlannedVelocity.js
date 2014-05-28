@@ -11,18 +11,18 @@
 
         tpl: [
             '<div class="expanded-widget">',
-                '<div class="stat-title">Planned Velocity</div>',
-                '<div class="stat-metric">',
-                    '<div class="metric-chart"></div>',
-                    '<div class="metric-chart-text percent-offset">',
-                        '{percentage}<div class="metric-percent">%</div>',
-                    '</div>',
-                    '<div class="metric-subtext">{estimate} of {plannedVelocity} {unit}</div>',
-                '</div>',
+            '<div class="stat-title">Planned Velocity</div>',
+            '<div class="stat-metric">',
+            '<div class="metric-chart"></div>',
+            '<div class="metric-chart-text percent-offset">',
+            '{percentage}<div class="metric-percent">%</div>',
+            '</div>',
+            '<div class="metric-subtext">{estimate} of {plannedVelocity} {unit}</div>',
+            '</div>',
             '</div>',
             '<div class="collapsed-widget">',
-                '<div class="stat-title">Planned Velocity</div>',
-                '<div class="stat-metric">{percentage}<span class="metric-percent">%</span></div>',
+            '<div class="stat-title">Planned Velocity</div>',
+            '<div class="stat-metric">{percentage}<span class="metric-percent">%</span></div>',
             '</div>'
         ],
 
@@ -65,15 +65,12 @@
 
             var percentage = plannedVelocity === 0 ? 0 : Math.round(estimate / plannedVelocity * 100);
 
-            var data = _.merge(
-                this.callParent(arguments),
-                {
-                    estimate: estimate,
-                    percentage: percentage,
-                    plannedVelocity: plannedVelocity,
-                    unit: this._getTimeboxUnits()
-                }
-            );
+            var data = {
+                estimate: estimate,
+                percentage: percentage,
+                plannedVelocity: plannedVelocity,
+                unit: this._getTimeboxUnits()
+            };
 
             return data;
         },

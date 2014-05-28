@@ -37,7 +37,6 @@ describe 'Rally.apps.iterationtrackingboard.IterationTrackingBoardApp', ->
         renderTo: 'testDiv'
       , config))
 
-      @setGridBoardHeightStub = @stub(@app, '_setGridBoardHeight')
       @waitForComponentReady(@app)
 
     getIterationFilter: ->
@@ -85,11 +84,6 @@ describe 'Rally.apps.iterationtrackingboard.IterationTrackingBoardApp', ->
   afterEach ->
     @app?.destroy()
     Rally.ui.gridboard.GridBoard.prototype.toggleState = @defaultToggleState
-
-  it 'should set height on gridboard', ->
-    @createApp().then =>
-      @waitForCallback(@setGridBoardHeightStub).then =>
-        expect(@setGridBoardHeightStub).toHaveBeenCalledOnce()
 
   it 'resets view on scope change', ->
     @createApp().then =>

@@ -17,6 +17,41 @@
   border-radius: @radius;
 }
 
+.override-ext-container() {
+  > span {
+    display: inline !important;
+    width: auto !important;
+
+    > div {
+      display: block !important;
+    }
+  }
+}
+
+.stat-panel {
+  .collapsed-widget,
+  .collapsed-widget > div {
+    display: none;
+  }
+
+  .expanded-widget,
+  .expanded-widget > div {
+    display: block;
+  }
+
+  &.collapsed {
+    .collapsed-widget,
+    .collapsed-widget > div {
+      display: inline-block;
+    }
+
+    .expanded-widget,
+    .expanded-widget > div {
+      display: none;
+    }
+  }
+}
+
 .stats-banner {
 
   .stat-panel {
@@ -105,6 +140,14 @@
             top: 0px !important;
           }
         }
+
+        .carousel {
+          .override-ext-container();
+
+          .carousel-panel {
+            .override-ext-container();
+          }
+        }
       }
     }
 
@@ -114,6 +157,10 @@
 
     .gauge .chart .highcharts-container {
       cursor: default;
+    }
+
+    .header {
+      display:none;
     }
 
     &.collapse-expand {

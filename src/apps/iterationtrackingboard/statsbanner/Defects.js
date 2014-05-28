@@ -11,28 +11,30 @@
 
         config: {
             context: null,
-            store: null
+            store: null,
+            data: {
+                activeCount: 0
+            }
         },
 
         tpl: [
             '<div class="expanded-widget">',
-                '<div class="stat-title">Defects</div>',
-                '<div class="stat-metric">',
-                    '<div class="metric-icon icon-defect"></div>{activeCount}',
-                    '<div class="stat-secondary">Active</div>',
-                '</div>',
+            '<div class="stat-title">Defects</div>',
+            '<div class="stat-metric">',
+            '<div class="metric-icon icon-defect"></div>{activeCount}',
+            '<div class="stat-secondary">Active</div>',
+            '</div>',
             '</div>',
             '<div class="collapsed-widget">',
-                '<span class="metric-icon icon-defect"></span>',
-                '<div class="stat-title">Defects</div>',
-                '<div class="stat-metric">{activeCount}</div>',
+            '<span class="metric-icon icon-defect"></span>',
+            '<div class="stat-title">Defects</div>',
+            '<div class="stat-metric">{activeCount}</div>',
             '</div>'
         ],
 
         initComponent: function() {
-            this.data = this._getRenderData();
+            this.mon(this.store, 'datachanged', this.onDataChanged, this);
             this.callParent(arguments);
-            this.store.on('datachanged', this.onDataChanged, this);
         },
 
         onDataChanged: function() {
@@ -58,7 +60,7 @@
         },
 
         _getRenderData: function() {
-            return _.merge(this.callParent(arguments), {activeCount: this._getActiveDefectCount()});
+            return {activeCount: this._getActiveDefectCount()};
         }
     });
 })();

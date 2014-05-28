@@ -10,12 +10,13 @@ describe 'Rally.apps.iterationtrackingboard.StatsBanner', ->
   helpers
     createBanner: (config={})->
       timeboxScope = config.scope || Ext.create 'Rally.app.TimeboxScope', record: @mom.getRecord 'iteration'
-      @banner = Ext.create 'Rally.apps.iterationtrackingboard.StatsBanner',
+      @banner = Ext.create 'Rally.apps.iterationtrackingboard.StatsBanner', Ext.apply(
         renderTo: 'testDiv'
         context:
           getTimeboxScope: -> timeboxScope
           getDataContext: -> Rally.environment.getContext().getDataContext()
-        items: [{xtype: 'component'}]
+        items: [{xtype: 'bannerwidget'}]
+        , config)
 
   beforeEach ->
     us = @mom.getData 'userstory'
@@ -48,18 +49,6 @@ describe 'Rally.apps.iterationtrackingboard.StatsBanner', ->
         Rally.environment.getMessageBus().publish Rally.Message.objectCreate, @mom.getData 'userstory'
         expect(loadSpy.callCount).toBe 0
 
-    describe 'Window Resize', ->
-      it 'should register handler for window resize', ->
-        onWindowResizeSpy = @spy Ext.EventManager, 'onWindowResize'
-        @createBanner()
-        expect(onWindowResizeSpy).toHaveBeenCalledWith @banner.doLayout, @banner
-
-      it 'should unregister handler when banner is destroyed', ->
-        @createBanner()
-        removeResizeListenerSpy = @spy Ext.EventManager, 'removeResizeListener'
-        @banner.destroy()
-        expect(removeResizeListenerSpy).toHaveBeenCalledWith @banner.doLayout, @banner
-
     describe 'Artifact Store', ->
       it 'should get correct models', ->
         @createBanner()
@@ -67,8 +56,8 @@ describe 'Rally.apps.iterationtrackingboard.StatsBanner', ->
 
       it 'should fetch fields correctly', ->
         @createBanner()
-        expect(@banner.store.fetch).toEqual ['Defects:summary[State;ScheduleState+Blocked]', 
-            'PlanEstimate', 'Requirement', 'FormattedID', 'Name', 'Blocked', 'BlockedReason','ScheduleState', 'State', 'Tasks:summary[State+Blocked]', 'TestCases']
+        expect(@banner.store.fetch).toEqual ['Defects:summary[State;ScheduleState+Blocked]',
+                                             'PlanEstimate', 'Requirement', 'FormattedID', 'Name', 'Blocked', 'BlockedReason','ScheduleState', 'State', 'Tasks:summary[State+Blocked]', 'TestCases']
 
       it 'should filter correctly', ->
         @createBanner()
@@ -93,3 +82,46 @@ describe 'Rally.apps.iterationtrackingboard.StatsBanner', ->
         loadSpy = @spy Rally.data.wsapi.artifact.Store::, 'load'
         @createBanner scope: Ext.create 'Rally.app.TimeboxScope', type: 'iteration'
         expect(loadSpy).not.toHaveBeenCalled()
+
+  describe 'persisting state', ->
+    it 'should initialize to expanded when no state is stored', ->
+      @createBanner()
+      @banner.applyState({})
+      expect(@banner.expanded).toBeTruthy()
+
+    it 'should apply state when stored as collapsed', ->
+      @createBanner()
+      @banner.applyState(expanded: false)
+      expect(@banner.expanded).toBeFalsy()
+
+    it 'should apply state when stored as expanded', ->
+      @createBanner()
+      @banner.applyState(expanded: true)
+      expect(@banner.expanded).toBeTruthy()
+
+    it 'should listen for expand event and save new state', ->
+      @createBanner()
+      @banner.fireEvent('expand')
+      expect(@banner.getState().expanded).toBeTruthy()
+
+    it 'should listen for collapse event and save new state', ->
+      @createBanner()
+      @banner.fireEvent('collapse')
+      expect(@banner.getState().expanded).toBeFalsy()
+
+  describe 'expand/collapse all children items', ->
+    it 'should listen for expand event and then expand the banner', ->
+      @createBanner({expanded: false, items: [{xtype: 'statsbannercollapseexpand'}]})
+      @click(css: '.collapse-expand').then =>
+        expect(@banner.getEl()).not.toHaveCls('collapsed')
+        _.each @banner.items.getRange(), (item) ->
+          expect(item.getEl().down('.expanded-widget').isVisible()).toBeTruthy()
+          expect(item.getEl().down('.collapsed-widget').isVisible()).toBeFalsy()
+
+    it 'should listen for collapse event and then collapse the banner', ->
+      @createBanner({expanded: true, items: [{xtype: 'statsbannercollapseexpand'}]})
+      @click(css: '.collapse-expand').then =>
+        expect(@banner.getEl()).toHaveCls('collapsed')
+        _.each @banner.items.getRange(), (item) ->
+          expect(item.getEl().down('.collapsed-widget').isVisible()).toBeTruthy()
+          expect(item.getEl().down('.expanded-widget').isVisible()).toBeFalsy()

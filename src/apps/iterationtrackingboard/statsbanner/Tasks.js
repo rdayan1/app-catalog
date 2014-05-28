@@ -19,21 +19,21 @@
 
         tpl: [
             '<div class="expanded-widget">',
-                '<div class="stat-title">Tasks</div>',
-                '<div class="stat-metric">',
-                    '<span class="metric-icon icon-task"></span>{count}',
-                    '<div class="stat-secondary">Active</div>',
-                '</div>',
+            '<div class="stat-title">Tasks</div>',
+            '<div class="stat-metric">',
+            '<span class="metric-icon icon-task"></span>{count}',
+            '<div class="stat-secondary">Active</div>',
+            '</div>',
             '</div>',
             '<div class="collapsed-widget">',
-                '<span class="metric-icon icon-task"></span>',
-                '<div class="stat-title">Tasks</div>',
-                '<div class="stat-metric">{count}</div>',
+            '<span class="metric-icon icon-task"></span>',
+            '<div class="stat-title">Tasks</div>',
+            '<div class="stat-metric">{count}</div>',
             '</div>'
         ],
 
         initComponent: function() {
-            this.store.on('datachanged', this.onDataChanged, this);
+            this.mon(this.store, 'datachanged', this.onDataChanged, this);
             this.callParent(arguments);
         },
 
@@ -43,7 +43,7 @@
         },
 
         _getRenderData: function() {
-            return _.merge(this.callParent(arguments), {count: this._getTaskCount()});
+            return {count: this._getTaskCount()};
         },
 
         _getTaskCount: function() {

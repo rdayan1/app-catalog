@@ -45,6 +45,7 @@
 
         settingsScope: 'project',
         scopeType: 'iteration',
+        autoScroll: false,
 
         config: {
             defaultSettings: {
@@ -104,8 +105,8 @@
         },
 
         _addStatsBanner: function() {
-            this.remove('statsBanner');
-            this.add({
+           this.remove('statsBanner');
+           this.add({
                 xtype: 'statsbanner',
                 itemId: 'statsBanner',
                 context: this.getContext(),
@@ -163,8 +164,13 @@
                     recordupdate: this._publishContentUpdatedNoDashboardLayout,
                     recordcreate: this._publishContentUpdatedNoDashboardLayout,
                     scope: this
-                }
+                },
+                height: this._getAvailableGridBoardHeight()
             });
+        },
+
+        _getAvailableGridBoardHeight: function() {
+            return this.getHeight() - this.down('#statsBanner').getHeight();
         },
 
         _getGridBoardPlugins: function() {
@@ -249,6 +255,13 @@
 
             return plugins;
         },
+
+        setSize: Ext.Function.createBuffered(function() {
+            this.superclass.setSize.apply(this, arguments);
+            if(this.gridboard && this.gridboard.getHeight() !== this._getAvailableGridBoardHeight()) {
+                this.gridboard.setHeight(this._getAvailableGridBoardHeight());
+            }
+        }, 100),
 
         _getCustomViewConfig: function() {
             var customViewConfig = {
@@ -456,13 +469,8 @@
         },
 
         _onLoad: function () {
-            this._setGridBoardHeight();
             this._publishContentUpdated();
             this.recordComponentReady();
-        },
-
-        _setGridBoardHeight: function() {
-            this.gridboard.setHeight(this.getHeight() - this.items.getAt(0).getHeight());
         },
 
         _onBoardFilter: function () {

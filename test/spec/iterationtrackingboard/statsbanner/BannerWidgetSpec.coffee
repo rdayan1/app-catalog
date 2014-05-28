@@ -14,31 +14,34 @@ describe 'Rally.apps.iterationtrackingboard.statsbanner.BannerWidget', ->
 
     it 'initializes expanded to true', ->
       @createPane()
-      expect(@pane.isExpanded()).toBe true
+      expect(@pane.expanded).toBe true
 
     it 'sets expanded to true when passed in', ->
       @createPane expanded: true
-      expect(@pane.isExpanded()).toBe true
+      expect(@pane.expanded).toBe true
 
     it 'sets expanded to false when passed in', ->
       @createPane expanded: false
-      expect(@pane.isExpanded()).toBe false
+      expect(@pane.expanded).toBe false
 
-    it 'collapses when toggled in expanded mode', ->
-      @createPane()
-      @spy @pane, 'collapse'
-      @pane.toggle()
-      expect(@pane.collapse.callCount).toBe 1
-      expect(@pane.isExpanded()).toBe false
-      expect(@pane.getEl().down('.expanded-widget').getStyle('display')).toBe 'none'
-      expect(@pane.getEl().down('.collapsed-widget').getStyle('display')).toBe 'block'
+    it 'sets expanded to false when collapsed', ->
+      @createPane expanded: true
+      @pane.collapse()
+      expect(@pane.expanded).toBe false
 
-    it 'expands when toggled in collapsed mode', ->
+    it 'sets expanded to true when expanded', ->
       @createPane expanded: false
-      @spy @pane, 'expand'
-      @pane.toggle()
-      expect(@pane.expand.callCount).toBe 1
-      expect(@pane.isExpanded()).toBe true
-      expect(@pane.getEl().down('.expanded-widget').getStyle('display')).toBe 'block'
-      expect(@pane.getEl().down('.collapsed-widget').getStyle('display')).toBe 'none'
+      @pane.expand()
+      expect(@pane.expanded).toBe true
 
+    it 'hides expanded widget when collapsed', ->
+      @createPane expanded: true
+      @pane.collapse()
+      expect(@pane.getEl().down('.expanded-widget').isVisible()).toBeFalsy()
+      expect(@pane.getEl().down('.collapsed-widget').isVisible()).toBeTruthy()
+
+    it 'hides collapsed widget when expanded', ->
+      @createPane expanded: false
+      @pane.expand()
+      expect(@pane.getEl().down('.expanded-widget').isVisible()).toBeTruthy()
+      expect(@pane.getEl().down('.collapsed-widget').isVisible()).toBeFalsy()

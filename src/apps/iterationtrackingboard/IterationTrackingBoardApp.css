@@ -1,17 +1,5 @@
 .iterationtrackingboard {
-    height: 100%;
-}
-
-.iterationtrackingboard.grid-toggled {
-    overflow-y: auto !important;
-}
-
-.iterationtrackingboard.board-toggled {
-    overflow-y: hidden !important;
-}
-
-.iterationtrackingboard .rui-gridboard {
-    height: 100%;
+    overflow-y: hidden;
 }
 
 .iterationtrackingboard .header {

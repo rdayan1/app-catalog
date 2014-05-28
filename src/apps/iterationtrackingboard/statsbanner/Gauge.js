@@ -27,8 +27,8 @@
         _tzOffsetPromises: {},
 
         initComponent: function() {
-            this.callParent(arguments);
             this.mon(this.store, 'datachanged', this.onDataChanged, this);
+            this.callParent(arguments);
         },
 
         expand: function() {
@@ -36,7 +36,7 @@
             if (this.chart) {
                 this.chart.doLayout();
             } else {
-                this._addChart(this._getChartConfig(this._getRenderData()));
+                this._addChart(this._getChartConfig({}));
             }
         },
 
@@ -86,7 +86,7 @@
         refreshChart: function(chartConfig) {
             Ext.suspendLayouts();
             this._cleanupChart();
-            if (this.expanded) {
+            if (this.rendered && this.expanded) {
                 this._addChart(chartConfig);
             }
             Ext.resumeLayouts();
