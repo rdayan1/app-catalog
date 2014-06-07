@@ -166,6 +166,7 @@ module.exports = (grunt) ->
             vendorPaths.concat [
               "#{appsdk_path}/builds/lib/analytics/analytics-all.js"
               "#{appsdk_path}/builds/lib/closure/closure-all.js"
+              "#{appsdk_path}/builds/lib/gantt/gantt-all.js"
 
               # Enable Ext Loader
               'test/support/ExtLoader.js'
@@ -208,6 +209,7 @@ module.exports = (grunt) ->
             "#{appsdk_path}/builds/rui/resources/css/rui-fonts.css"
             "#{appsdk_path}/builds/lib/closure/closure-20130117-r2446.css"
             "#{appsdk_path}/builds/rui/resources/css/lib-closure.css"
+            "#{appsdk_path}/builds/lib/gantt/resources/css/sch-gantt-all.css",
             'build/resources/css/catalog-all.css'
           ]
           host: "http://127.0.0.1:#{inlinePort}/"
