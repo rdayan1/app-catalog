@@ -2,10 +2,6 @@
     var Ext = window.Ext4 || window.Ext;
 
     Ext.define('Rally.apps.roadmapplanningboard.util.PlanGenerator', {
-        requires: [
-            'Rally.apps.roadmapplanningboard.AppModelFactory',
-            'Rally.apps.roadmapplanningboard.util.NextDateRangeGenerator'
-        ],
 
         inject: ['timeframeStore', 'planStore', 'nextDateRangeGenerator'],
 

@@ -6,8 +6,9 @@
         singleton: true,
         requires: [
             'Rally.data.Store',
-            'Rally.apps.roadmapplanningboard.AppModelFactory',
-            'Rally.apps.roadmapplanningboard.util.NextDateRangeGenerator'
+            'Rally.data.rpm.ModelFactory',
+            'Rally.apps.roadmapplanningboard.util.NextDateRangeGenerator',
+            'Rally.data.aggregate.ModelFactory',
         ],
         loaded: false,
 
@@ -17,25 +18,25 @@
                     timelineStore: {
                         className: 'Rally.data.Store',
                         parameters: [{
-                            model: Rally.apps.roadmapplanningboard.AppModelFactory.getTimelineModel()
+                            model: Rally.data.rpm.ModelFactory.getTimelineModel()
                         }]
                     },
                     timeframeStore: {
                         className: 'Rally.data.Store',
                         parameters: [{
-                            model: Rally.apps.roadmapplanningboard.AppModelFactory.getTimeframeModel()
+                            model: Rally.data.rpm.ModelFactory.getTimeframeModel()
                         }]
                     },
                     planStore: {
                         className: 'Rally.data.Store',
                         parameters: [{
-                            model: Rally.apps.roadmapplanningboard.AppModelFactory.getPlanModel()
+                            model: Rally.data.rpm.ModelFactory.getPlanModel()
                         }]
                     },
                     roadmapStore: {
                         className: 'Rally.data.Store',
                         parameters: [{
-                            model: Rally.apps.roadmapplanningboard.AppModelFactory.getRoadmapModel()
+                            model: Rally.data.rpm.ModelFactory.getRoadmapModel()
                         }]
                     },
                     preliminaryEstimateStore: {

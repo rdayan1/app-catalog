@@ -3,7 +3,7 @@
 
     Ext.define('Rally.apps.roadmapplanningboard.util.RoadmapGenerator', {
         requires: [
-            'Rally.apps.roadmapplanningboard.AppModelFactory',
+            'Rally.data.rpm.ModelFactory',
             'Rally.apps.roadmapplanningboard.util.NextDateRangeGenerator'
         ],
 
@@ -101,7 +101,7 @@
         },
 
         _createPlanForNewRoadmap: function(name, timeframe) {
-            var planModel = Rally.apps.roadmapplanningboard.AppModelFactory.getPlanModel();
+            var planModel = Rally.data.rpm.ModelFactory.getPlanModel();
 
             return Ext.create(planModel, {
                 name: name,
@@ -121,7 +121,7 @@
         },
 
         _createTimeframeForNewTimeline: function (name, startDate, endDate) {
-            var timeframeModel = Rally.apps.roadmapplanningboard.AppModelFactory.getTimeframeModel();
+            var timeframeModel = Rally.data.rpm.ModelFactory.getTimeframeModel();
 
             return Ext.create(timeframeModel, {
                 name: name,
