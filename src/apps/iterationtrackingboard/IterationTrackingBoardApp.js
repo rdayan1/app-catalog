@@ -16,6 +16,7 @@
             'Rally.ui.cardboard.plugin.Print',
             'Rally.ui.gridboard.plugin.GridBoardActionsMenu',
             'Rally.ui.gridboard.plugin.GridBoardAddNew',
+            'Rally.ui.gridboard.plugin.GridBoardCustomFilterControl',
             'Rally.ui.gridboard.plugin.GridBoardOwnerFilter',
             'Rally.ui.gridboard.plugin.GridBoardFilterInfo',
             'Rally.ui.gridboard.plugin.GridBoardArtifactTypeChooser',
@@ -99,10 +100,13 @@
                     autoLoad: !context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE'),
                     remoteSort: true,
                     root: {expanded: true},
-                    filters: [context.getTimeboxScope().getQueryFilter()],
                     enableHierarchy: true,
                     pageSize: this.getGridPageSizes()[1]
                 };
+
+            if(!context.isFeatureEnabled('USE_CUSTOM_FILTER_POPOVER_ON_ITERATION_TRACKING_APP')) {
+                config.filters = [context.getTimeboxScope().getQueryFilter()];
+            }
 
             return Ext.create('Rally.data.wsapi.TreeStoreBuilder').build(config);
         },
@@ -133,32 +137,13 @@
                 context: context,
                 plugins: this._getGridBoardPlugins(),
                 modelNames: this.modelNames,
-                cardBoardConfig: {
-                    serverSideFiltering: context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE'),
-                    plugins: [
-                        {ptype: 'rallycardboardprinting', pluginId: 'print'},
-                        {ptype: 'rallyfixedheadercardboard'}
-                    ],
-                    storeConfig: {
-                        useShallowFetch: true
-                    },
-                    columnConfig: {
-                        xtype: 'iterationtrackingboardcolumn',
-                        additionalFetchFields: ['PortfolioItem'],
-                        plugins: [{
-                            ptype: 'rallycolumnpolicy',
-                            app: this
-                        }]
-                    },
-                    cardConfig: {
-                        showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1
-                    },
-                    listeners: {
-                        filter: this._onBoardFilter,
-                        filtercomplete: this._onBoardFilterComplete
-                    }
-                },
+                useFilterCollection: !context.isFeatureEnabled('USE_CUSTOM_FILTER_POPOVER_ON_ITERATION_TRACKING_APP'),
+                cardBoardConfig: this._getBoardConfig(),
                 gridConfig: this._getGridConfig(gridStore),
+                storeConfig: {
+                    useShallowFetch: true,
+                    filters: [context.getTimeboxScope().getQueryFilter()]
+                },
                 addNewPluginConfig: {
                     style: {
                         'float': 'left'
@@ -173,6 +158,31 @@
                 },
                 height: Math.max(this.getAvailableGridBoardHeight(), 150)
             });
+        },
+
+        _getBoardConfig: function() {
+            return {
+                serverSideFiltering: this.getContext().isFeatureEnabled('BETA_TRACKING_EXPERIENCE'),
+                plugins: [
+                    {ptype: 'rallycardboardprinting', pluginId: 'print'},
+                    {ptype: 'rallyfixedheadercardboard'}
+                ],
+                columnConfig: {
+                    xtype: 'iterationtrackingboardcolumn',
+                    additionalFetchFields: ['PortfolioItem'],
+                    plugins: [{
+                        ptype: 'rallycolumnpolicy',
+                        app: this
+                    }]
+                },
+                cardConfig: {
+                    showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1
+                },
+                listeners: {
+                    filter: this._onBoardFilter,
+                    filtercomplete: this._onBoardFilterComplete
+                }
+            };
         },
 
         /**
@@ -228,10 +238,17 @@
                     });
                 }
 
-                plugins.push({
-                    ptype: 'rallygridboardfiltercontrol',
-                    filterControlConfig: filterControlConfig
-                });
+                if (context.isFeatureEnabled('USE_CUSTOM_FILTER_POPOVER_ON_ITERATION_TRACKING_APP')) {
+                    plugins.push({
+                        ptype: 'rallygridboardcustomfiltercontrol',
+                        filterControlConfig: filterControlConfig
+                    });
+                } else {
+                    plugins.push({
+                        ptype: 'rallygridboardfiltercontrol',
+                        filterControlConfig: filterControlConfig
+                    });
+                }
             } else {
                 plugins.push('rallygridboardownerfilter');
             }
