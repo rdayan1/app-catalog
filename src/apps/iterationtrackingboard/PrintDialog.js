@@ -33,6 +33,7 @@
             },
             {
                 xtype: 'radiogroup',
+                id: 'whattoprint',
                 vertical: true,
                 columns: 1,
                 height: 70,
@@ -40,19 +41,24 @@
                     {
                         boxLabel: 'Summary list of work items',
                         name: 'reportType',
-                        inputValue: '1',
+                        inputValue: 'summary',
                         checked: true
                     },
                     {
                         boxLabel: 'Summary list of work items with children',
                         name: 'reportType',
-                        inputValue: '2'
+                        inputValue: 'includechildren'
                     }
                 ]
             }
         ],
         constructor: function(config) {
             this.initConfig(config || {});
+            this.timeboxScope = this.config.timeboxScope;
+
+            this.nodesToExpand = [];
+            this.allRecords = [];
+
             this.callParent(arguments);
         },
 
@@ -92,15 +98,69 @@
                     }
                 ]
             }];
+
             this.callParent(arguments);
         },
 
-        _handlePrintClick: function() {
-            //todo: add code to handle the print
+        _handlePrintClick: function(target, e) {
+            var includeChildren = Ext.getCmp('whattoprint').getChecked()[0].inputValue === 'includechildren';
+
+            var storeConfig = this._buildStoreConfig(includeChildren);
+            var treeStoreBuilder = Ext.create('Rally.data.wsapi.TreeStoreBuilder');
+
+            treeStoreBuilder.build(storeConfig);
         },
 
-        _handleCancelClick: function() {
+        _handleCancelClick: function(target, e) {
             this.destroy();
+        },
+
+        _buildStoreConfig: function(shouldIncludeChildren) {
+            var context = Rally.environment.getContext();
+            var timeboxFilter = this.timeboxScope.getQueryFilter();
+
+            // var context = Rally.environment.getContext();
+
+            var storeConfig = {
+                models: ['User Story', 'Defect', 'Defect Suite', 'Test Set'],
+                autoLoad: true,
+                remoteSort: true,
+                root: {expanded: shouldIncludeChildren},
+                enableHierarchy: shouldIncludeChildren,
+                childPageSizeEnabled: false,
+                filters: [timeboxFilter],
+                listeners: {
+                    load: this._onStoreLoad,
+                    scope: this
+                }
+            };
+
+            return storeConfig;
+        },
+
+        _onStoreLoad: function(treeStore, node, records, success, eOpts) {
+            if (_.isEmpty(this.allRecords)) {
+                this.allRecords = _.union(this.allRecords, records);
+            }
+
+            if (treeStore.enableHierarchy) {
+                this.nodesToExpand = _.without(this.nodesToExpand, node.objectID);
+
+                _(records).filter(function(record) {
+                    return !record.isLeaf();
+                }).forEach(function(record) {
+                    this.nodesToExpand.push(record.objectID);
+                    record.expand(true);
+                }, this);
+            }
+
+            if (_.isEmpty(this.nodesToExpand)) {
+                this._onDataReady();
+            }
+        },
+
+        _onDataReady: function() {
+            debugger; // pass this.allRecords to the view
         }
     });
 })();
