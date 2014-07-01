@@ -637,6 +637,12 @@
         _onLoad: function () {
             this._publishContentUpdated();
             this.recordComponentReady();
+            if (Rally.BrowserTest) {
+                this.add({
+                    xtype: 'component',
+                    cls: 'iteration-tracking-board-ready'
+                })
+            }
         },
 
         _onBoardFilter: function () {
