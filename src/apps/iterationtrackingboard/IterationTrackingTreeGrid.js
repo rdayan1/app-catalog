@@ -1,4 +1,4 @@
-(function() {
+(function () {
     var Ext = window.Ext4 || window.Ext;
 
     /**
@@ -58,6 +58,11 @@
                     units: 'hr'
                 }
             ]
+        },
+
+        isStatefulColumn: function (column) {
+            var isStateful = this.callParent(arguments);
+            return isStateful && column.dataIndex !== this.treeColumnDataIndex;
         }
     });
 })();
