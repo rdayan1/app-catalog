@@ -214,7 +214,7 @@
                 cls += ' ' + this.currentTimeboxCls;
 
             }
-            this.getContentCell().addCls(cls);
+            _.invoke(this.getContentCells(), 'addCls', cls);
             this.getStatusCell().addCls(cls);
             this.getColumnHeaderCell().addCls(cls);
         }

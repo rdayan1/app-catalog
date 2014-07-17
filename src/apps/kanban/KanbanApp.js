@@ -213,7 +213,7 @@
         },
 
         _getCardboardConfig: function() {
-            return {
+            var config = {
                 xtype: 'rallycardboard',
                 plugins: [
                     {ptype: 'rallycardboardprinting', pluginId: 'print'},
@@ -248,6 +248,17 @@
                     context: this.getContext().getDataContext()
                 }
             };
+            if(this.getContext().isFeatureEnabled('F5684_KANBAN_SWIM_LANES')) {
+                config = Ext.merge(config, {
+                    rows: {
+                        field: 'c_ClassOfService'
+                    },
+                    storeConfig: {
+                        groupDir: 'DESC'
+                    }
+                });
+            }
+            return config;
         },
 
         _getFilters: function() {

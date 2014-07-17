@@ -67,42 +67,15 @@
             });
         },
 
-        _renderColumns: function() {
-            this.addCls('loading');
-
-            if (this.columnDefinitions.length > 0) {
-
-                this._calculateMinWidth();
-
-                var html = [
-                    '<table class="column-container">',
-                        '<thead class="column-headers">', this._generateHeaderHtml(), '</thead>',
-                        '<tbody class="columns">', this._generateContentHtml(), '</tbody>',
-                    '</table>'
-                ].join('');
-
-                this.getEl().update(html);
-
-                this.showMask(this.maskMsg || 'Loading...');
-
-                var contentCellQuery = this.getEl().query('.columns td'),
-                    statusCellQuery  = this.getEl().query('.column-headers th.card-column-status'),
-                    headerCellQuery  = this.getEl().query('.column-headers th.card-column');
-
-                var els;
-
-                _.forEach(this.columnDefinitions, function(colDef, idx) {
-                    els = {
-                        headerCell:  headerCellQuery[idx],
-                        statusCell:  statusCellQuery[idx],
-                        contentCell: contentCellQuery[idx]
-                    };
-
-                    this.renderColumn(colDef, els);
-                }, this);
-
-                this.fireEvent('aftercolumnrender', this);
-            }
+        _addColumnsToDom: function() {
+            var statusCellQuery  = this.getEl().query('.column-headers th.card-column-status'),
+                headerCellQuery  = this.getEl().query('.column-headers th.card-column');
+            _.forEach(this.columnDefinitions, function(colDef, idx) {
+                this.renderColumn(colDef, {
+                    headerCell:  headerCellQuery[idx],
+                    statusCell:  statusCellQuery[idx]
+                });
+            }, this);
         },
 
         _normalizeColumnStatusFieldStyles: function() {

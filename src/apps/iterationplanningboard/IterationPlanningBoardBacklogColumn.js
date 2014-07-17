@@ -71,7 +71,7 @@
 
             this.on('afterrender', function() {
                 var cls = 'planning-column backlog';
-                this.getContentCell().addCls(cls);
+                _.invoke(this.getContentCells(), 'addCls', cls);
                 this.getStatusCell().addCls(cls);
                 this.getColumnHeaderCell().addCls(cls);
             }, this, {single: true});
@@ -94,7 +94,7 @@
 
             this.searching = true;
             var searchValue = this.getColumnHeader().down('#searchText').getValue();
-            this.setMaskTarget(this.getContentCell());
+            this.setMaskTarget(this.getContentCells()[0]);
             this.showMask();
             this._deactivatedCards = [];
 
