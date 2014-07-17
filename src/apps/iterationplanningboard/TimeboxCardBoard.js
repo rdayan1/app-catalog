@@ -45,7 +45,7 @@
             Ext.removeNode(column.getStatusCell().dom);
         },
 
-        createColumnElements: function(afterOrBefore, column) {
+       createColumnElements: function(afterOrBefore, column) {
             var insertFnName = afterOrBefore === 'after' ? 'insertAfter' : 'insertBefore';
 
             var els = this.callParent(arguments);
