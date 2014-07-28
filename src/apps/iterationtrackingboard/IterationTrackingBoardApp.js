@@ -40,6 +40,7 @@
             'Rally.app.Message',
             'Rally.apps.iterationtrackingboard.Column',
             'Rally.apps.iterationtrackingboard.StatsBanner',
+            'Rally.apps.iterationtrackingboard.StatsBannerField',
             'Rally.clientmetrics.ClientMetricsRecordable',
             'Rally.apps.iterationtrackingboard.PrintDialog',
             'Rally.ui.grid.plugin.ColumnAutoSizer'
@@ -53,12 +54,14 @@
         alias: 'widget.rallyiterationtrackingboard',
 
         settingsScope: 'project',
+        userScopedSettings: true,
         scopeType: 'iteration',
         autoScroll: false,
 
         config: {
             defaultSettings: {
                 showCardAge: true,
+                showStatsBanner: true,
                 cardAgeThreshold: 3
             }
         },
@@ -78,8 +81,11 @@
                 grid.fireEvent('storecurrentpagereset');
             }
 
-            this._addStatsBanner();
-            this._getGridStore().then({
+            if(this._shouldShowStatsBanner()){
+                this._addStatsBanner();
+            }
+
+            this._buildGridStore().then({
                 success: function(gridStore) {
                     var model = gridStore.model;
                     if(_.isFunction(model.getArtifactComponentModels)) {
@@ -107,11 +113,23 @@
             return fields;
         },
 
-        _getGridStore: function() {
+        getUserSettingsFields: function () {
+            var fields = this.callParent(arguments);
+
+            fields.push({
+                xtype: 'rallystatsbannersettingsfield',
+                fieldLabel: '',
+                mapsToMultiplePreferenceKeys: ['showStatsBanner']
+            });
+
+            return fields;
+        },
+
+        _buildGridStore: function() {
             var context = this.getContext(),
                 config = {
                     models: this.modelNames,
-                    autoLoad: !context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE'),
+                    autoLoad: false,
                     remoteSort: true,
                     root: {expanded: true},
                     enableHierarchy: true,
@@ -125,6 +143,10 @@
             }
 
             return Ext.create('Rally.data.wsapi.TreeStoreBuilder').build(config);
+        },
+
+        _shouldShowStatsBanner: function() {
+            return this.getSetting('showStatsBanner');
         },
 
         _addStatsBanner: function() {
@@ -206,7 +228,7 @@
          */
         getAvailableGridBoardHeight: function() {
             var height = this.getHeight();
-            if(this.down('#statsBanner').rendered) {
+            if(this._shouldShowStatsBanner() && this.down('#statsBanner').rendered) {
                 height -= this.down('#statsBanner').getHeight();
             }
             return height;
@@ -409,21 +431,27 @@
             var gridBoard = this.queryById('gridBoard');
             var gridOrBoard = gridBoard.getGridOrBoard();
             var totalRows = gridOrBoard.store.totalCount;
-            Ext.create('Rally.apps.iterationtrackingboard.PrintDialog', {showWarning: totalRows >= 400});
+            var timeboxScope = this.getContext().getTimeboxScope();
+
+            Ext.create('Rally.apps.iterationtrackingboard.PrintDialog', {
+                showWarning: totalRows > 200,
+                timeboxScope: timeboxScope,
+                grid: gridOrBoard
+            });
         },
 
         _getIterationOid: function() {
             var iterationId = '-1';
             var timebox = this.getContext().getTimeboxScope();
 
-            if (timebox && timebox.getRecord()){
+            if (timebox && timebox.getRecord()) {
                 iterationId = timebox.getRecord().getId();
             }
             return iterationId;
         },
 
         _resizeGridBoardToFillSpace: function() {
-            if(this.gridboard) {
+            if (this.gridboard) {
                 this.gridboard.setHeight(this.getAvailableGridBoardHeight());
             }
         },
@@ -434,7 +462,7 @@
                 stateId: 'iteration-tracking-board-app',
 
                 defaultGridViews: [{
-                    model: ['UserStory', 'Defect', 'DefectSuite'],
+                    model: ['UserStory', 'Defect', 'DefectSuite', 'TestSet'],
                     name: 'Defect Status',
                     state: {
                         cmpState: {
@@ -576,15 +604,8 @@
             var gridConfig = {
                 xtype: 'rallyiterationtrackingtreegrid',
                 store: gridStore,
-                enableRanking: this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled,
-                columnCfgs: null, //must set this to null to offset default behaviors in the gridboard
-                defaultColumnCfgs: this._getGridColumns(),
-                showSummary: true,
+                columnCfgs: this._getGridColumns(),
                 summaryColumns: this._getSummaryColumnConfig(),
-                treeColumnRenderer: function (value, metaData, record, rowIdx, colIdx, store, view) {
-                    store = store.treeStore || store;
-                    return Rally.ui.renderer.RendererFactory.getRenderTemplate(store.model.getField('FormattedID')).apply(record.data);
-                },
                 enableBulkEdit: context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE'),
                 plugins: ['rallycolumnautosizerplugin', 'rallytreegridchildpager'],
                 stateId: stateId,
@@ -647,11 +668,15 @@
             this.setLoading(false);
         },
 
-        _hidePrintButton: function(hide) {
-            if (this.getContext().isFeatureEnabled('S68103_ITERATION_TRACKING_APP_PRINT')) {
-                var button = _.find(this.gridboard.plugins, {itemId: 'printExportMenuButton'});
+        _hidePrintButton: function(hide, gridboard) {
+            var button, menuItem;
+
+            if (this.getContext().isFeatureEnabled('S68103_ITERATION_TRACKING_APP_PRINT') && gridboard) {
+                button = _.find(gridboard.plugins, {itemId: 'printExportMenuButton'});
+
                 if (button) {
-                    var menuItem = _.find(button.menuItems, {text: 'Print...'});
+                    menuItem = _.find(button.menuItems, {text: 'Print...'});
+
                     if (menuItem) {
                         menuItem.hidden = hide;
                     }
@@ -659,15 +684,15 @@
             }
         },
 
-        _onToggle: function (toggleState) {
+        _onToggle: function (toggleState, gridOrBoard, gridboard) {
             var appEl = this.getEl();
 
             if (toggleState === 'board') {
                 appEl.replaceCls('grid-toggled', 'board-toggled');
-                this._hidePrintButton(true);
+                this._hidePrintButton(true, gridboard);
             } else {
                 appEl.replaceCls('board-toggled', 'grid-toggled');
-                this._hidePrintButton(false);
+                this._hidePrintButton(false, gridboard);
             }
             this._publishContentUpdated();
         },
