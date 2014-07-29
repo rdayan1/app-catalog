@@ -32,6 +32,7 @@
         config: {
             defaultSettings: {
                 groupByField: 'ScheduleState',
+                showRows: false,
                 columns: Ext.JSON.encode({
                     Defined: {wip: ''},
                     'In-Progress': {wip: ''},
@@ -78,7 +79,8 @@
             return Rally.apps.kanban.Settings.getFields({
                 shouldShowColumnLevelFieldPicker: this._shouldShowColumnLevelFieldPicker(),
                 defaultCardFields: this.getSetting('cardFields'),
-                isDndWorkspace: this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled
+                isDndWorkspace: this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled,
+                shouldShowRowSettings: this._shouldShowSwimLanes()
             });
         },
 
@@ -91,6 +93,10 @@
             this.callParent(arguments);
             this.gridboard.destroy();
             this.launch();
+        },
+
+        _shouldShowSwimLanes: function() {
+            return this.getContext().isFeatureEnabled('F5684_KANBAN_SWIM_LANES');
         },
 
         _shouldShowColumnLevelFieldPicker: function() {
@@ -248,10 +254,10 @@
                     context: this.getContext().getDataContext()
                 }
             };
-            if(this.getContext().isFeatureEnabled('F5684_KANBAN_SWIM_LANES')) {
-                config = Ext.merge(config, {
+            if (this._shouldShowSwimLanes() && this.getSetting('showRows')) {
+                Ext.merge(config, {
                     rows: {
-                        field: 'c_ClassOfService'
+                        field: this.getSetting('rowsField')
                     },
                     storeConfig: {
                         groupDir: 'DESC'

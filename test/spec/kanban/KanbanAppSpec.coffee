@@ -39,6 +39,7 @@ describe 'Rally.apps.kanban.KanbanApp', ->
           wip: ''
       )
       expect(@app.getSetting('cardFields')).toBe 'FormattedID,Name,Owner,Discussion,Tasks,Defects'
+      expect(@app.getSetting('showRows')).toBe false
 
   it 'does not show add new when user is not a project editor', ->
     Rally.environment.getContext().getPermissions().userPermissions[0].Role = 'Viewer'
@@ -336,6 +337,41 @@ describe 'Rally.apps.kanban.KanbanApp', ->
       expect(storeConfig.filters.length).toBe 2
       expect(storeConfig.filters[0].toString()).toBe query
       expect(storeConfig.filters[1].toString()).toBe timeboxScope.getQueryFilter().toString()
+
+  describe 'Swim Lanes is toggled ON', ->
+    beforeEach ->
+      @stub(Rally.app.Context.prototype, 'isFeatureEnabled').withArgs('F5684_KANBAN_SWIM_LANES').returns(true)
+
+    # TODO fix this test once S69286 is completed and Class Of Service field exists on artifacts
+    xit 'should include rows configuration with rowsField when showRows setting is true', ->
+      @createApp(showRows: true, rowsField: 'ClassOfService').then =>
+        expect(@app.cardboard.rows.field).toBe 'ClassOfService'
+
+    it 'should not include rows configuration when showRows setting is false', ->
+      @createApp(showRows: false, rowsField: 'ClassOfService').then =>
+        expect(@app.cardboard.rows).toBeUndefined()
+
+    it 'passes shouldShowRowSettings correctly', ->
+      @createApp().then =>
+        getFieldsSpy = @spy Rally.apps.kanban.Settings, 'getFields'
+        @app.getSettingsFields()
+        expect(getFieldsSpy.callCount).toBe 1
+        expect(getFieldsSpy.getCall(0).args[0].shouldShowRowSettings).toBe true
+
+  describe 'Swim Lanes is toggled OFF', ->
+    beforeEach ->
+      @stub(Rally.app.Context.prototype, 'isFeatureEnabled').withArgs('F5684_KANBAN_SWIM_LANES').returns(false)
+
+    it 'should not include rows configuration', ->
+      @createApp(showRows: true, rowsField: 'ClassOfService').then =>
+        expect(@app.cardboard.rows).toBeUndefined()
+
+    it 'passes shouldShowRowSettings correctly', ->
+      @createApp().then =>
+        getFieldsSpy = @spy Rally.apps.kanban.Settings, 'getFields'
+        @app.getSettingsFields()
+        expect(getFieldsSpy.callCount).toBe 1
+        expect(getFieldsSpy.getCall(0).args[0].shouldShowRowSettings).toBe false
 
   helpers
     createApp: (settings = {}, options = {}, context = {}) ->

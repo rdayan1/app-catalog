@@ -19,6 +19,10 @@
     border: 1px solid #F00;
 }
 
+.row-settings .x4-form-item-input-row .x4-field-label-cell {
+    vertical-align: top;
+}
+
 .rui-picker-right-action {
   display: inline;
   float: right;
