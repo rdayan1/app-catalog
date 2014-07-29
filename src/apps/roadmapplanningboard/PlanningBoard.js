@@ -224,16 +224,8 @@
             }));
             Ext.fly(thCell)[insertFnName](column.getColumnHeaderCell());
 
-            var tdCell = Ext.DomHelper.createDom(this._getColumnDomHelperConfig({
-                style: {
-                    width: Math.floor(100 / this.columnDefinitions.length).toString() + '%'
-                }
-            }));
-            Ext.fly(tdCell)[insertFnName](column.getContentCell());
-
             return {
-                headerCell: thCell,
-                contentCell: tdCell
+                headerCell: thCell
             };
         },
 
@@ -329,10 +321,6 @@
             this.drawAddNewColumnButton();
 
             return column;
-        },
-
-        destroy: function () {
-            this.callParent(arguments);
         },
 
         _addColumnFromTimeframeAndPlan: function (timeframe, plan) {
