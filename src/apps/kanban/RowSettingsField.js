@@ -81,10 +81,10 @@
                         data: [
 //                            TODO placeholders for S70392 to complete
 //                            {'name': 'Artifact Type', 'value': ''},
-//                            {'name': 'Blocked', 'value': 'Blocked'},
-                            {'name': 'Class Of Service', 'value': 'c_ClassOfService'}
-//                            {'name': 'Owner', 'value': 'Owner'},
-//                            {'name': 'Sizing', 'value': 'PlanEstimate'}
+                            {'name': 'Blocked', 'value': 'Blocked'},
+                            {'name': 'Class Of Service', 'value': 'c_ClassOfService'},
+                            {'name': 'Owner', 'value': 'Owner'},
+                            {'name': 'Sizing', 'value': 'PlanEstimate'}
                         ]
                     }
                 }
