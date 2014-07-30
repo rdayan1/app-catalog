@@ -12,6 +12,6 @@
       "KanbanApp.js"
    ],
    "css": [
-      "KanbanApp.css"
+      "KanbanApp.less"
    ]
 }
