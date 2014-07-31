@@ -329,6 +329,61 @@ describe 'Rally.apps.kanban.KanbanApp', ->
       expect(storeConfig.filters[0].toString()).toBe query
       expect(storeConfig.filters[1].toString()).toBe timeboxScope.getQueryFilter().toString()
 
+
+
+  describe 'Updating the Owner', ->
+
+
+    it 'should always occur when always selected', ->
+      settings=
+        updateOwnerOnDrop : 'always'
+
+      @createApp(settings).then =>
+        allCards = _.flatten(_.values(@app.cardboard.getCards()))
+        aCard = _.first(allCards)
+        aCard.getRecord().set("Owner", null)
+        @app._maybeUpdateOwner(aCard)
+        expect(aCard.getRecord().get("Owner")).toBe Rally.environment.getContext().getUser()
+
+
+    it 'should not occur when never is selected', ->
+      settings=
+        updateOwnerOnDrop : 'never'
+
+      @createApp(settings).then =>
+        allCards = _.flatten(_.values(@app.cardboard.getCards()))
+        aCard = _.first(allCards)
+        aCard.getRecord().set("Owner",null)
+        @app._maybeUpdateOwner(aCard)
+        expect(aCard.getRecord().get("Owner")).toBeNull()
+
+
+    it 'should NOT occur when assigned to a different user and unassigned is selected', ->
+      settings=
+        updateOwnerOnDrop : 'unassigned'
+
+      @createApp(settings).then =>
+        currentUser = Rally.environment.getContext().getUser()
+        allCards = _.flatten(_.values(@app.cardboard.getCards()))
+        aCard = _.first(allCards)
+        someOtherUser = Rally.domain.User.create({_ref:'bogus_ref'})
+        aCard.getRecord().set("Owner", someOtherUser)
+        @app._maybeUpdateOwner(aCard)
+        expect(aCard.getRecord().get("Owner")._ref).not.toBe currentUser._ref
+
+
+    it 'should occur when assigned to nobody and unassigned is selected', ->
+      settings=
+        updateOwnerOnDrop : 'unassigned'
+
+      @createApp(settings).then =>
+        currentUser = Rally.environment.getContext().getUser()
+        allCards = _.flatten(_.values(@app.cardboard.getCards()))
+        aCard = _.first(allCards)
+        aCard.getRecord().set("Owner", null)
+        @app._maybeUpdateOwner(aCard)
+        expect(aCard.getRecord().get("Owner")._ref).toBe currentUser._ref
+
   helpers
     createApp: (settings = {}, options = {}, context = {}) ->
       @app = Ext.create 'Rally.apps.kanban.KanbanApp',

@@ -24,3 +24,7 @@
   float: right;
   padding-right: 4px;
 }
+
+.owner-update-field td {
+	vertical-align:top;
+}

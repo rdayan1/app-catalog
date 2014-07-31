@@ -42,7 +42,8 @@
                 hideReleasedCards: false,
                 showCardAge: true,
                 cardAgeThreshold: 3,
-                pageSize: 25
+                pageSize: 25,
+                updateOwnerOnDrop: 'never'
             }
         },
 
@@ -78,7 +79,8 @@
             return Rally.apps.kanban.Settings.getFields({
                 shouldShowColumnLevelFieldPicker: this._shouldShowColumnLevelFieldPicker(),
                 defaultCardFields: this.getSetting('cardFields'),
-                isDndWorkspace: this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled
+                isDndWorkspace: this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled,
+                updateOwnerOnDrop: this.getSetting('updateOwnerOnDrop')
             });
         },
 
@@ -276,6 +278,27 @@
             return columnSetting && Ext.JSON.decode(columnSetting);
         },
 
+        _getUpdateOwnerOnDropSetting : function() {
+            var settingValue = this.getSetting('updateOwnerOnDrop');
+            settingValue = settingValue || 'never';
+            return settingValue;
+        },
+
+        _shouldUpdateCardOnDrop : function(card) {
+            var setting = this._getUpdateOwnerOnDropSetting();
+            var owner = card.getRecord().get('Owner');
+
+            if (setting === 'never') {
+                return false;
+            } else if (setting === 'always') {
+                return owner === null || owner._ref !== Rally.environment.getContext().getUser()._ref;
+            } else if (setting === 'unassigned' && owner === null) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
         _buildReportConfig: function(report) {
             var shownTypes = this._getShownTypes();
             var workItems = shownTypes.length === 2 ? 'N' : shownTypes[0].workItemType;
@@ -389,6 +412,13 @@
                 if (setting && setting.scheduleStateMapping) {
                     card.getRecord().set('ScheduleState', setting.scheduleStateMapping);
                 }
+            }
+            this._maybeUpdateOwner(card);
+        },
+
+        _maybeUpdateOwner : function(card) {
+            if (this._shouldUpdateCardOnDrop(card)) {
+                card.getRecord().set('Owner', Rally.environment.getContext().getUser());
             }
         },
 

@@ -89,7 +89,7 @@
                     }
                 });
             }
-            
+
             items.push(
                 {
                     name: 'hideReleasedCards',
@@ -108,7 +108,22 @@
                 {
                     type: 'query'
                 });
-
+            items.push(
+                {
+                    xtype: 'radiogroup',
+                    layout: {
+                        type: 'vbox',
+                        align: 'left'
+                    },
+                    fieldLabel: 'Owner',
+                    cls: 'owner-update-field',
+                    value: {updateOwnerOnDrop: config.updateOwnerOnDrop},
+                    items: [
+                        { name: 'updateOwnerOnDrop', boxLabel: "Don't update the owner automatically", inputValue: "never" },
+                        { name: 'updateOwnerOnDrop', boxLabel: "Set the owner to the current user when dragged", inputValue: "always" },
+                        { name: 'updateOwnerOnDrop', boxLabel: "Set the owner to the current user when dragged for unassigned cards", inputValue: "unassigned" }
+                    ]
+                });
             return items;
         }
     });
