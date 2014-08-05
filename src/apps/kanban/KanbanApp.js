@@ -249,7 +249,6 @@
                     showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
                     showBlockedReason: true
                 },
-                loadMask: false,
                 storeConfig: {
                     context: this.getContext().getDataContext()
                 }
