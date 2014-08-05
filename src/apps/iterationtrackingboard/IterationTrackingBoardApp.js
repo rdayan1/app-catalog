@@ -245,7 +245,6 @@
                 var filterControlConfig = {
                     cls: 'small gridboard-filter-control',
                     context: context,
-//                    margin: '3 10 3 7',
                     stateful: true
                 };
 
@@ -264,11 +263,9 @@
                                 'TestCaseResult',
                                 'VersionId'
                             ],
-                            whiteListFields: [
-                                'Tags'
-                            ],
                             modelNames: this.modelNames,
-                            stateId: context.getScopedStateId('iteration-tracking-custom-filter-button')
+                            stateId: context.getScopedStateId('iteration-tracking-custom-filter-button'),
+                            whiteListFields: ['Tags']
                         })
                     });
                 } else {

@@ -67,15 +67,13 @@
                                 'PortfolioItemType',
                                 'Release'
                             ],
-                            whiteListFields: [
-                                'Tags'
-                            ],
-                            margin: '3 10 3 0',
-                            modelNames: [piTypePath],
-                            stateId: this.getContext().getScopedStateId('release-planning-custom-filter-button'),
                             cls: 'small gridboard-filter-control',
                             context: this.getContext(),
-                            stateful: true
+                            margin: '3 10 3 0',
+                            modelNames: [piTypePath],
+                            stateful: true,
+                            stateId: this.getContext().getScopedStateId('release-planning-custom-filter-button'),
+                            whiteListFields: ['Tags']
                         }
                     },
                     {

@@ -288,15 +288,13 @@
                                     'PortfolioItemType',
                                     'State'
                                 ],
-                                whiteListFields: [
-                                    'Tags'
-                                ],
-                                margin: '3 10',
-                                modelNames: [currentTypePath],
-                                stateId: this.getContext().getScopedStateId('portfolio-kanban-custom-filter-button'),
                                 cls: 'small gridboard-filter-control',
                                 context: this.getContext(),
-                                stateful: true
+                                margin: '3 10',
+                                modelNames: [currentTypePath],
+                                stateful: true,
+                                stateId: this.getContext().getScopedStateId('portfolio-kanban-custom-filter-button'),
+                                whiteListFields: ['Tags']
                             }
                         },
                         {
