@@ -23,7 +23,7 @@
                     xtype: 'rallyfieldcombobox',
                     model: Ext.identityFn('UserStory'),
                     margin: '10px 0 0 0',
-                    fieldLabel: 'Group Vertically By',
+                    fieldLabel: 'Columns',
                     listeners: {
                         select: function(combo) {
                             this.fireEvent('fieldselected', combo.getRecord().get('fieldDefinition'));
@@ -66,7 +66,7 @@
                 items.push({
                     name: 'groupHorizontallyByField',
                     xtype: 'kanbanrowsettingsfield',
-                    fieldLabel: 'Group Horizontally By',
+                    fieldLabel: 'Swimlanes',
                     margin: '10 0 0 0',
                     mapsToMultiplePreferenceKeys: ['showRows', 'rowsField']
                 });
