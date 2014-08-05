@@ -288,14 +288,12 @@ describe 'Rally.apps.kanban.KanbanApp', ->
     @createApp({},
       renderTo: Rally.test.helpers.CardBoard.smallContainerForScrolling()
     ).then =>
-      @app.down('rallycardboard').hideMask()
       Rally.test.helpers.CardBoard.scrollForwards @app.down('rallycardboard'), @
 
   it 'should be able to scroll backwards', ->
     @createApp({},
       renderTo: Rally.test.helpers.CardBoard.smallContainerForScrolling()
     ).then =>
-      @app.down('rallycardboard').hideMask()
       Rally.test.helpers.CardBoard.scrollBackwards @app.down('rallycardboard'), @
 
   it 'should have correct icons on cards', ->
@@ -384,7 +382,8 @@ describe 'Rally.apps.kanban.KanbanApp', ->
         settings: settings
         renderTo: options.renderTo || 'testDiv'
 
-      @waitForComponentReady @app
+      @waitForComponentReady(@app).then =>
+        @app.down('rallycardboard').hideMask()
 
     assertPolicyCmpConfig: (settingsKey, policy) ->
       column = @app.down('rallycardboard').getColumns()[0]

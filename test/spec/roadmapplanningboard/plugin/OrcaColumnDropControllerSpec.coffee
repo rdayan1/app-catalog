@@ -38,9 +38,11 @@ describe 'Rally.apps.roadmapplanningboard.plugin.OrcaColumnDropController', ->
     _createColumn: (type, options) ->
       loadStub = @stub()
       Ext.merge options,
+        columnClass: type
         listeners:
           load: loadStub
-      column = Ext.create type, options
+
+      column = @cardboardHelper.createColumn(options)
       @waitForCallback(loadStub).then =>
         column
 
@@ -79,6 +81,7 @@ describe 'Rally.apps.roadmapplanningboard.plugin.OrcaColumnDropController', ->
         expect(features[i].id).toBe cardRecords[i].get('_refObjectUUID')
 
   beforeEach ->
+    @cardboardHelper = Rally.test.helpers.CardBoard
     Rally.test.apps.roadmapplanningboard.helper.TestDependencyHelper.loadDependencies()
 
     planStore = Rally.test.apps.roadmapplanningboard.mocks.StoreFixtureFactory.getPlanStoreFixture()
@@ -155,8 +158,7 @@ describe 'Rally.apps.roadmapplanningboard.plugin.OrcaColumnDropController', ->
           dragDropEnabled: true
         controller.init(column)
         column.fireEvent('ready')
-
-        expect(controller.dropTarget).toBeDefined()
+        expect(controller.dropTargets[0]).toBeDefined()
 
   describe 'when drag and drop ranking', ->
     describe 'within a backlog', ->
