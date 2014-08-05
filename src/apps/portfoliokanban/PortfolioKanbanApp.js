@@ -277,24 +277,12 @@
                             ptype: 'rallygridboardcustomfiltercontrol',
                             filterChildren: false,
                             filterControlConfig: {
-                                blackListFields: [
-                                    'DirectChildrenCount',
-                                    'DisplayColor',
-                                    'DragAndDropRank',
-                                    'Iteration',
-                                    'TestCase',
-                                    'TestCaseResult',
-                                    'VersionId',
-                                    'PortfolioItemType',
-                                    'State'
-                                ],
-                                cls: 'small gridboard-filter-control',
+                                blackListFields: ['PortfolioItemType', 'State'],
                                 context: this.getContext(),
                                 margin: '3 10',
                                 modelNames: [currentTypePath],
                                 stateful: true,
-                                stateId: this.getContext().getScopedStateId('portfolio-kanban-custom-filter-button'),
-                                whiteListFields: ['Tags']
+                                stateId: this.getContext().getScopedStateId('portfolio-kanban-custom-filter-button')
                             }
                         },
                         {

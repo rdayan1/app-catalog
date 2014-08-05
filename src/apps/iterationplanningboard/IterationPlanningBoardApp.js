@@ -29,21 +29,10 @@
                     ptype: 'rallygridboardcustomfiltercontrol',
                     context: this.getContext(),
                     filterControlConfig: {
-                        blackListFields: [
-                            'DisplayColor',
-                            'DragAndDropRank',
-                            'Iteration',
-                            'PortfolioItem',
-                            'TestCase',
-                            'TestCaseResult',
-                            'VersionId'
-                        ],
-                        cls: 'small gridboard-filter-control',
-                        margin: '3 10 3 0',
+                        blackListFields: ['Iteration', 'PortfolioItem'],
                         modelNames: this.modelNames,
                         stateful: true,
-                        stateId: this.getContext().getScopedStateId('iteration-planning-custom-filter-button'),
-                        whiteListFields: ['Tags']
+                        stateId: this.getContext().getScopedStateId('iteration-planning-custom-filter-button')
                     }
                 });
             } else {
