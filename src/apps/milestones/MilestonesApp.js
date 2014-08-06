@@ -7,6 +7,7 @@
         cls: 'milestones-app',
 
         launch: function() {
+            var context = this.getContext();
             this.add(Ext.create('Rally.ui.list.ListView', {
                 model: Ext.identityFn('milestone'),
                 addNewConfig: this._addNewConfig(),
@@ -23,11 +24,25 @@
                             }
                         },
                         'Name',
-                        'TargetDate'
+                        'TargetDate',
+                        {
+                            dataIndex: 'Artifacts',
+                            renderer: function(artifactsCollection) {
+                                return artifactsCollection.Count;
+                            },
+                            text: 'Item Count'
+                        },
+                        {
+                            dataIndex: 'TargetProject',
+                            renderer: function(project) {
+                                return project ? project.Name : 'All projects in ' + context.getWorkspace().Name;
+                            },
+                            text: 'Project'
+                        }
                     ],
                     enableRanking: true,
                     storeConfig: {
-                        fetch: 'FormattedID,Name,TargetDate',
+                        fetch: 'FormattedID,Name,TargetDate,Artifacts,TargetProject',
                         sorters: [{
                             property: 'TargetDate',
                             direction: 'DESC'
