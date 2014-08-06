@@ -8,7 +8,7 @@
         requires: [ 'Rally.ui.cardboard.Column', 'Rally.ui.cardboard.ColumnHeader' ],
 
         mixins: [ 'Rally.apps.roadmapplanningboard.mixin.CollapsableHeaderContainer' ],
-
+        onRowAdded: Ext.emptyFn,
         afterRender: function () {
             this.drawHeader();
 
