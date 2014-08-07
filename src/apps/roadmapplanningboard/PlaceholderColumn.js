@@ -8,7 +8,7 @@
         requires: [ 'Rally.ui.cardboard.Column', 'Rally.ui.cardboard.ColumnHeader' ],
 
         mixins: [ 'Rally.apps.roadmapplanningboard.mixin.CollapsableHeaderContainer' ],
-        onRowAdded: Ext.emptyFn,
+
         afterRender: function () {
             this.drawHeader();
 
@@ -79,7 +79,8 @@
             return Rally.ui.cardboard.Column.prototype.getMinWidth();
         },
 
-        filter: function () {}
-    });
+        filter: Ext.emptyFn,
 
+        onRowAdded: Ext.emptyFn
+    });
 })();

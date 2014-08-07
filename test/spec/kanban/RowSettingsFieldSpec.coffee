@@ -7,22 +7,47 @@ Ext.require [
 describe 'Rally.apps.kanban.RowSettingsField', ->
   helpers
     createField: ->
-      @field = Ext.create 'Rally.apps.kanban.RowSettingsField', {
+      onReady = @stub()
+      @field = Ext.create 'Rally.apps.kanban.RowSettingsField',
         renderTo: 'testDiv'
+        context: Rally.environment.getContext()
         value:
           showRows: true
-          rowsField: 'c_ClassOfService'
-      }
+          rowsField: 'Owner'
+        listeners:
+          ready: onReady
+
+      @waitForCallback onReady
 
   it 'should set initial value to config', ->
-    @createField()
-    data = @field.getSubmitData()
-    expect(data.showRows).toBe true
-    expect(data.rowsField).toEqual 'c_ClassOfService'
+    @createField().then =>
+      data = @field.getSubmitData()
+      expect(data.showRows).toBe true
+      expect(data.rowsField).toEqual 'Owner'
 
   it 'should not return rowsField value if not checked', ->
-    @createField()
-    @field.down('rallycheckboxfield').setValue false
-    data = @field.getSubmitData()
-    expect(data.showRows).toBe false
-    expect(data.rowsField).toBeUndefined()
+    @createField().then =>
+      @field.down('rallycheckboxfield').setValue false
+      data = @field.getSubmitData()
+      expect(data.showRows).toBe false
+      expect(data.rowsField).toBeUndefined()
+
+  it 'should include explicit rowable fields', ->
+    @createField().then =>
+      combobox = @field.down 'rallycombobox'
+      expect(combobox.findRecordByValue('Blocked')).toBeTruthy()
+      expect(combobox.findRecordByValue('Owner')).toBeTruthy()
+      expect(combobox.findRecordByValue('PlanEstimate')).toBeTruthy()
+      expect(combobox.findRecordByValue('Expedite')).toBeTruthy()
+
+  it 'should include a custom dropdown field', ->
+    @createField().then =>
+      combobox = @field.down 'rallycombobox'
+      expect(combobox.findRecordByValue('c_KanbanState')).toBeTruthy()
+
+  it 'should sort the values in the combobox', ->
+    @createField().then =>
+      combobox = @field.down 'rallycombobox'
+      records = combobox.getStore().getRange()
+      fieldNames = _.pluck records, 'name'
+      expect(fieldNames).toEqual [].concat(fieldNames).sort()

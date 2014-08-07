@@ -6,7 +6,8 @@ Ext.require [
   'Rally.util.Element',
   'Rally.ui.notify.Notifier',
   'Rally.app.Context',
-  'Rally.test.helpers.CardBoard'
+  'Rally.test.helpers.CardBoard',
+  'Rally.data.Ranker'
 ]
 
 describe 'Rally.apps.kanban.KanbanApp', ->
@@ -334,13 +335,37 @@ describe 'Rally.apps.kanban.KanbanApp', ->
     beforeEach ->
       @stub(Rally.app.Context.prototype, 'isFeatureEnabled').withArgs('F5684_KANBAN_SWIM_LANES').returns(true)
 
-    # TODO fix this test once S69286 is completed and Class Of Service field exists on artifacts
-    xit 'should include rows configuration with rowsField when showRows setting is true', ->
-      @createApp(showRows: true, rowsField: 'ClassOfService').then =>
-        expect(@app.cardboard.rows.field).toBe 'ClassOfService'
+    it 'should include rows configuration with rowsField when showRows setting is true', ->
+      @createApp(showRows: true, rowsField: 'Owner').then =>
+        expect(@app.cardboard.rows.field).toBe 'Owner'
+        expect(@app.cardboard.rows.sortDirection).toBe 'ASC'
+
+    it 'should include correct rank sorter in manual rank workspace', ->
+      @createApp(
+        showRows: true,
+        rowsField: 'Owner',
+      ,
+        DragDropRankingEnabled: false
+      ).then =>
+        expect(@app.cardboard.storeConfig.sorters).toEqual [
+          property: Rally.data.Ranker.RANK_FIELDS.MANUAL
+          direction: 'ASC'
+        ]
+
+    it 'should include correct rank sorter in drag and drop rank workspace', ->
+      @createApp(
+        showRows: true,
+        rowsField: 'Owner',
+      ,
+        DragDropRankingEnabled: true
+      ).then =>
+        expect(@app.cardboard.storeConfig.sorters).toEqual [
+          property: Rally.data.Ranker.RANK_FIELDS.DND
+          direction: 'ASC'
+        ]
 
     it 'should not include rows configuration when showRows setting is false', ->
-      @createApp(showRows: false, rowsField: 'ClassOfService').then =>
+      @createApp(showRows: false, rowsField: 'Owner').then =>
         expect(@app.cardboard.rows).toBeUndefined()
 
     it 'passes shouldShowRowSettings correctly', ->
@@ -355,7 +380,7 @@ describe 'Rally.apps.kanban.KanbanApp', ->
       @stub(Rally.app.Context.prototype, 'isFeatureEnabled').withArgs('F5684_KANBAN_SWIM_LANES').returns(false)
 
     it 'should not include rows configuration', ->
-      @createApp(showRows: true, rowsField: 'ClassOfService').then =>
+      @createApp(showRows: true, rowsField: 'Owner').then =>
         expect(@app.cardboard.rows).toBeUndefined()
 
     it 'passes shouldShowRowSettings correctly', ->
