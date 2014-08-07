@@ -136,6 +136,8 @@ describe 'Rally.apps.roadmapplanningboard.plugin.OrcaColumnDropController', ->
     @row =
       getContentCellFor: -> rowContentCell
       getRowValue: ->
+      fieldDef:
+        name: 'long fingernails' 
 
     @ajaxRequest = @stub Ext.Ajax, 'request', (options) ->
       options.success.call(options.scope)
