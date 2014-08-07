@@ -68,7 +68,8 @@
                     xtype: 'kanbanrowsettingsfield',
                     fieldLabel: 'Swimlanes',
                     margin: '10 0 0 0',
-                    mapsToMultiplePreferenceKeys: ['showRows', 'rowsField']
+                    mapsToMultiplePreferenceKeys: ['showRows', 'rowsField'],
+                    readyEvent: 'ready'
                 });
             }
 

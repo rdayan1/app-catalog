@@ -24,7 +24,9 @@
         requires: [
             'Rally.ui.CheckboxField',
             'Rally.ui.combobox.ComboBox',
-            'Rally.ui.plugin.FieldValidationUi'
+            'Rally.ui.plugin.FieldValidationUi',
+            'Rally.data.ModelFactory',
+            'Rally.domain.WsapiModelBuilder'
         ],
 
         mixins: {
@@ -68,7 +70,6 @@
                     plugins: ['rallyfieldvalidationui'],
                     name: 'rowsField',
                     margin: '0 5px',
-                    value: this.getValue().rowsField,
                     displayField: 'name',
                     valueField: 'value',
                     disabled: this.getValue().showRows !== 'true',
@@ -78,17 +79,53 @@
                     storeConfig: {
                         remoteFilter: false,
                         fields: ['name', 'value'],
-                        data: [
-//                            TODO placeholders for S70392 to complete
-//                            {'name': 'Artifact Type', 'value': ''},
-                            {'name': 'Blocked', 'value': 'Blocked'},
-                            {'name': 'Class Of Service', 'value': 'c_ClassOfService'},
-                            {'name': 'Owner', 'value': 'Owner'},
-                            {'name': 'Sizing', 'value': 'PlanEstimate'}
-                        ]
+                        data: []
                     }
                 }
             ]);
+
+            Rally.data.ModelFactory.getModels({
+                types: ['userstory', 'defect'],
+                context: this.context,
+                success: this._onModelsRetrieved,
+                scope: this
+            });
+        },
+
+        _onModelsRetrieved: function (models) {
+            var explicitFields = [
+                    {'name': 'Blocked', 'value': 'Blocked'},
+                    {'name': 'Owner', 'value': 'Owner'},
+                    {'name': 'Sizing', 'value': 'PlanEstimate'},
+                    {'name': 'Expedite', value: 'Expedite'}
+                    //TODO: type?
+                ],
+                fields = explicitFields.concat(this._getRowableFields(_.values(models)));
+
+            var combobox = this.down('rallycombobox');
+            combobox.getStore().loadData(_.sortBy(fields, 'name'));
+            combobox.setValue(this.getValue().rowsField);
+            this.fireEvent('ready', this);
+        },
+
+        _getRowableFields: function (models) {
+            var artifactModel = Rally.domain.WsapiModelBuilder.buildCompositeArtifact(models, this.context),
+                allFields = artifactModel.getFields(),
+                rowableFields = _.filter(allFields, function (field) {
+                    var attr = field.attributeDefinition;
+                    return !field.hidden &&
+                        attr &&
+                        attr.Custom &&
+                        attr.Constrained &&
+                        artifactModel.getModelsForField(field).length === models.length
+                });
+
+            return _.map(rowableFields, function(field) {
+                return {
+                    name: field.displayName,
+                    value: field.name
+                };
+            });
         },
 
         /**
