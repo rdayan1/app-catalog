@@ -57,6 +57,7 @@
                         filterChildren: false,
                         filterControlConfig: {
                             blackListFields: ['PortfolioItemType', 'Release'],
+                            whiteListFields: [this.getContext().isFeatureEnabled('S70874_SHOW_MILESTONES_PAGE') ? 'Milestones' : ''],
                             context: this.getContext(),
                             modelNames: [piTypePath],
                             stateful: true,
@@ -66,28 +67,13 @@
                     {
                         ptype: 'rallygridboardfieldpicker',
                         boardFieldBlackList: [
-                            'ObjectID',
-                            'Description',
-                            'DisplayColor',
-                            'FormattedID',
-                            'Name',
-                            'Notes',
-                            'Ready',
                             'AcceptedLeafStoryCount',
                             'AcceptedLeafStoryPlanEstimateTotal',
                             'DirectChildrenCount',
                             'LeafStoryCount',
                             'LeafStoryPlanEstimateTotal',
-                            'Rank',
-                            'DragAndDropRank',
-                            'UnEstimatedLeafStoryCount',
-                            'CreationDate',
-                            'Subscription',
-                            'Workspace',
-                            'Changesets',
                             'LastUpdateDate',
-                            'Owner',
-                            'PortfolioItemType'
+                            'UnEstimatedLeafStoryCount'
                         ],
                         boardFieldDefaults: ['Discussion', 'PreliminaryEstimate', 'UserStories'],
                         headerPosition: 'left'
