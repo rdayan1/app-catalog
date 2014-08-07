@@ -117,7 +117,7 @@
                         attr &&
                         attr.Custom &&
                         attr.Constrained &&
-                        artifactModel.getModelsForField(field).length === models.length
+                        artifactModel.getModelsForField(field).length === models.length;
                 });
 
             return _.map(rowableFields, function(field) {
