@@ -35,7 +35,8 @@ describe 'Rally.apps.kanban.RowSettingsField', ->
   it 'should include explicit rowable fields', ->
     @createField().then =>
       combobox = @field.down 'rallycombobox'
-      expect(combobox.findRecordByValue('Blocked')).toBeTruthy()
+# uncomment when DE21992 is resolved
+#      expect(combobox.findRecordByValue('Blocked')).toBeTruthy()
       expect(combobox.findRecordByValue('Owner')).toBeTruthy()
       expect(combobox.findRecordByValue('PlanEstimate')).toBeTruthy()
       expect(combobox.findRecordByValue('Expedite')).toBeTruthy()

@@ -94,7 +94,8 @@
 
         _onModelsRetrieved: function (models) {
             var explicitFields = [
-                    {'name': 'Blocked', 'value': 'Blocked'},
+                // uncomment when DE21992 is resolved
+                //{'name': 'Blocked', 'value': 'Blocked'},
                     {'name': 'Owner', 'value': 'Owner'},
                     {'name': 'Sizing', 'value': 'PlanEstimate'},
                     {'name': 'Expedite', value: 'Expedite'}
