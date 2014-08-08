@@ -124,6 +124,22 @@
                         { name: 'updateOwnerOnDrop', boxLabel: "Set the owner to the current user when dragged for unassigned cards", inputValue: "unassigned" }
                     ]
                 });
+            items.push(
+                {
+                    xtype: 'radiogroup',
+                    layout: {
+                        type: 'vbox',
+                        align: 'left'
+                    },
+                    fieldLabel: 'Iteration',
+                    cls: 'iteration-update-field',
+                    value: {updateIterationOnDrop: config.updateIterationOnDrop},
+                    items: [
+                        { name: 'updateIterationOnDrop', boxLabel: "Don't update the iteration automatically", inputValue: "never" },
+                        { name: 'updateIterationOnDrop', boxLabel: "Set the iteration to the current iteration when dragged", inputValue: "always" },
+                        { name: 'updateIterationOnDrop', boxLabel: "Set the iteration to the current iteration unassigned cards", inputValue: "unassigned" }
+                    ]
+                });
             return items;
         }
     });

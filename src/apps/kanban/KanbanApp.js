@@ -43,7 +43,8 @@
                 showCardAge: true,
                 cardAgeThreshold: 3,
                 pageSize: 25,
-                updateOwnerOnDrop: 'never'
+                updateOwnerOnDrop: 'never',
+                updateIterationOnDrop: 'never'
             }
         },
 
@@ -80,7 +81,8 @@
                 shouldShowColumnLevelFieldPicker: this._shouldShowColumnLevelFieldPicker(),
                 defaultCardFields: this.getSetting('cardFields'),
                 isDndWorkspace: this.getContext().getWorkspace().WorkspaceConfiguration.DragDropRankingEnabled,
-                updateOwnerOnDrop: this.getSetting('updateOwnerOnDrop')
+                updateOwnerOnDrop: this.getSetting('updateOwnerOnDrop'),
+                updateIterationOnDrop: this.getSetting('updateIterationOnDrop')
             });
         },
 
@@ -284,7 +286,13 @@
             return settingValue;
         },
 
-        _shouldUpdateCardOnDrop : function(card) {
+        _getUpdateIterationOnDropSetting : function() {
+            var settingValue = this.getSetting('updateIterationOnDrop');
+            settingValue = settingValue || 'never';
+            return settingValue;
+        },
+
+        _shouldUpdateOwnerOnDrop : function(card) {
             var setting = this._getUpdateOwnerOnDropSetting();
             var owner = card.getRecord().get('Owner');
 
@@ -292,6 +300,21 @@
                 return false;
             } else if (setting === 'always') {
                 return owner === null || owner._ref !== Rally.environment.getContext().getUser()._ref;
+            } else if (setting === 'unassigned' && owner === null) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        _shouldUpdateIterationOnDrop : function(card) {
+            var setting = this._getUpdateIterationOnDropSetting();
+            var iteration = card.getRecord().get('Iteration');
+
+            if (setting === 'never') {
+                return false;
+            } else if (setting === 'always') {
+                return iteration === null || iteration._ref !== this._getCurrentIteration()._ref;
             } else if (setting === 'unassigned' && owner === null) {
                 return true;
             } else {
@@ -413,13 +436,40 @@
                     card.getRecord().set('ScheduleState', setting.scheduleStateMapping);
                 }
             }
-            this._maybeUpdateOwner(card);
+            var updated = this._maybeUpdateOwner(card);
+            updated = updated | this._maybeUpdateIteration(card);
+            if (updated) {
+                debugger;
+                card.layout(true);
+            }
         },
 
         _maybeUpdateOwner : function(card) {
-            if (this._shouldUpdateCardOnDrop(card)) {
+            if (this._shouldUpdateOwnerOnDrop(card)) {
                 card.getRecord().set('Owner', Rally.environment.getContext().getUser());
+                return true;
             }
+            return false;
+        },
+
+        _maybeUpdateIteration : function(card) {
+            if (this._shouldUpdateIterationOnDrop(card)) {
+                card.getRecord().set('Iteration', this._getCurrentIteration());
+                return true;
+            }
+            return false;
+        },
+
+        _getCurrentIteration: function() {
+            // store = Ext4.create("Rally.data.wsapi.Store", { model:"Iteration", listeners: { load: function(store,data,success){ console.log(data);}},fetch:['Name','ScheduleState']});
+            // store.load();
+            debugger;
+            var timebox = this.getContext().getTimeboxScope();
+
+            if (timebox && timebox.getRecord()) {
+                return timebox.getRecord();
+            }
+            return null;
         },
 
         _publishContentUpdated: function() {
