@@ -16,6 +16,7 @@ describe 'Rally.apps.roadmapplanningboard.plugin.OrcaColumnDropController', ->
         card: options.sourceColumn.getCards()[options.sourceIndex]
         column: options.sourceColumn
         backlogColumn: options.backlogColumn
+        row: @row
       sourcePlanRecord = options.sourceColumn.planRecord
       destPlanRecord = options.destColumnDropController.cmp.planRecord
 
