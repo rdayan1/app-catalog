@@ -60,14 +60,40 @@
         _addGridBoard: function(gridStore) {
             var context = this.getContext(),
                 stateString = 'custom-treegrid',
-                stateId = context.getScopedStateId(stateString);
+                stateId = context.getScopedStateId(stateString),
+                gridboardPlugins = [];
+
+            gridboardPlugins.push({
+                ptype: 'rallygridboardfieldpicker',
+                headerPosition: 'left',
+                gridFieldBlackList: [
+                    'ObjectID',
+                    'Description',
+                    'DisplayColor',
+                    'Notes',
+                    'Subscription',
+                    'Workspace',
+                    'Changesets',
+                    'RevisionHistory',
+                    'Children',
+                    'Successors',
+                    'Predecessors'
+                ],
+                boardFieldBlackList: [
+                    'PredecessorsAndSuccessors'
+                ],
+//                alwaysSelectedValues: alwaysSelectedValues,
+                modelNames: this.modelNames,
+                boardFieldDefaults: (this.getSetting('cardFields') && this.getSetting('cardFields').split(',')) ||
+                    ['Parent', 'Tasks', 'Defects', 'Discussion', 'PlanEstimate', 'Iteration']
+            });
 
             this.add({
                 itemId: 'gridBoard',
                 xtype: 'rallygridboard',
                 stateId: 'iterationtracking-gridboard',
                 context: context,
-                plugins: [],
+                plugins: gridboardPlugins,
                 toggleState: 'grid',
                 modelNames: this.modelNames,
                 cardBoardConfig: {},
