@@ -422,7 +422,8 @@
             }
             this.recordComponentReady({
                 miscData: {
-                    swimLanes: this.getSetting('showRows')
+                    swimLanes: this.getSetting('showRows'),
+                    swimLaneField: this.getSetting('rowsField')
                 }
             });
         },
