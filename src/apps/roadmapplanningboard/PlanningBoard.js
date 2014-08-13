@@ -210,25 +210,6 @@
             return this.columns;
         },
 
-        /**
-         * Create the dom elements needed to render a Rally.ui.cardboard.Column
-         * @param {String} afterOrBefore Either 'after' or 'before'
-         * @param {Rally.ui.cardboard.Column} column The column to insert after or before
-         * @return {Object} obj An object containing 'headerCell' and 'contentCell' dom elements that were created
-         */
-        createColumnElements: function (afterOrBefore, column) {
-            var insertFnName = afterOrBefore === 'after' ? 'insertAfter' : 'insertBefore';
-
-            var thCell = Ext.DomHelper.createDom(this._getColumnDomHelperConfig({
-                tag: 'th'
-            }));
-            Ext.fly(thCell)[insertFnName](column.getColumnHeaderCell());
-
-            return {
-                headerCell: thCell
-            };
-        },
-
         _getBacklogColumnConfig: function () {
             return {
                 xtype: 'backlogplanningcolumn',
