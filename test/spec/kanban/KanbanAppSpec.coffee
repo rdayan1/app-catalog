@@ -366,7 +366,7 @@ describe 'Rally.apps.kanban.KanbanApp', ->
 
     it 'should not include rows configuration when showRows setting is false', ->
       @createApp(showRows: false, rowsField: 'Owner').then =>
-        expect(@app.cardboard.rows).toBeUndefined()
+        expect(@app.cardboard.rows).toBeNull()
 
     it 'passes shouldShowRowSettings correctly', ->
       @createApp().then =>
@@ -381,7 +381,7 @@ describe 'Rally.apps.kanban.KanbanApp', ->
 
     it 'should not include rows configuration', ->
       @createApp(showRows: true, rowsField: 'Owner').then =>
-        expect(@app.cardboard.rows).toBeUndefined()
+        expect(@app.cardboard.rows).toBeNull()
 
     it 'passes shouldShowRowSettings correctly', ->
       @createApp().then =>
