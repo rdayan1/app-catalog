@@ -420,7 +420,11 @@
             if (Rally.BrowserTest) {
                 Rally.BrowserTest.publishComponentReady(this);
             }
-            this.recordComponentReady();
+            this.recordComponentReady({
+                miscData: {
+                    swimLanes: this.getSetting('showRows')
+                }
+            });
         },
 
         _publishContentUpdatedNoDashboardLayout: function() {
