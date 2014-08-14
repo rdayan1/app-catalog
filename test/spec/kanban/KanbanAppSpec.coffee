@@ -337,8 +337,8 @@ describe 'Rally.apps.kanban.KanbanApp', ->
 
     it 'should include rows configuration with rowsField when showRows setting is true', ->
       @createApp(showRows: true, rowsField: 'Owner').then =>
-        expect(@app.cardboard.rows.field).toBe 'Owner'
-        expect(@app.cardboard.rows.sortDirection).toBe 'ASC'
+        expect(@app.cardboard.rowConfig.field).toBe 'Owner'
+        expect(@app.cardboard.rowConfig.sortDirection).toBe 'ASC'
 
     it 'should include correct rank sorter in manual rank workspace', ->
       @createApp(
@@ -366,7 +366,7 @@ describe 'Rally.apps.kanban.KanbanApp', ->
 
     it 'should not include rows configuration when showRows setting is false', ->
       @createApp(showRows: false, rowsField: 'Owner').then =>
-        expect(@app.cardboard.rows).toBeNull()
+        expect(@app.cardboard.rowConfig).toBeNull()
 
     it 'passes shouldShowRowSettings correctly', ->
       @createApp().then =>
@@ -381,7 +381,7 @@ describe 'Rally.apps.kanban.KanbanApp', ->
 
     it 'should not include rows configuration', ->
       @createApp(showRows: true, rowsField: 'Owner').then =>
-        expect(@app.cardboard.rows).toBeNull()
+        expect(@app.cardboard.rowConfig).toBeNull()
 
     it 'passes shouldShowRowSettings correctly', ->
       @createApp().then =>

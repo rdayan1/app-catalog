@@ -255,7 +255,7 @@
             };
             if (this._shouldShowSwimLanes() && this.getSetting('showRows')) {
                 Ext.merge(config, {
-                    rows: {
+                    rowConfig: {
                         field: this.getSetting('rowsField'),
                         sortDirection: 'ASC'
                     },
