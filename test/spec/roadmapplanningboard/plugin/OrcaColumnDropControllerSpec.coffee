@@ -94,9 +94,7 @@ describe 'Rally.apps.roadmapplanningboard.plugin.OrcaColumnDropController', ->
     secondFeatureStore = Rally.test.apps.roadmapplanningboard.mocks.StoreFixtureFactory.getSecondFeatureStoreFixture()
 
     newSorter = property: Rally.data.Ranker.RANK_FIELDS.MANUAL
-#    @ajaxStub = @ajax.whenQuerying('userstory').respondWith()
     secondFeatureStore.sort [newSorter]
-
 
     plan = planStore.getById('513617ecef8623df1391fefc')
     features = Rally.test.apps.roadmapplanningboard.mocks.StoreFixtureFactory.featureStoreData
@@ -129,8 +127,6 @@ describe 'Rally.apps.roadmapplanningboard.plugin.OrcaColumnDropController', ->
       typeNames:
         child:
           name: 'Feature'
-
-
     ).then (@backlogColumn) =>
 
     rowContentCell = Ext.get('testDiv').createChild()
