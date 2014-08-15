@@ -11,7 +11,8 @@
             'Rally.ui.combobox.ComboBox',
             'Rally.ui.picker.FieldPicker',
             'Rally.ui.TextField',
-            'Rally.ui.NumberField'
+            'Rally.ui.NumberField',
+            'Rally.apps.board.RowSettingsField'
         ],
 
         getFields: function(context) {
@@ -21,7 +22,7 @@
                     name: 'type',
                     xtype: 'rallycombobox',
                     shouldRespondToScopeChange: true,
-                    context: context,
+//                    context: context, hmm- unable to clone?
                     storeConfig: {
                         model: Ext.identityFn('TypeDefinition'),
                         sorters: [
@@ -93,6 +94,19 @@
                             if (!Ext.Array.contains(fields, combo.getValue())) {
                                 combo.setValue(fields[0]);
                             }
+                        }
+                    }
+                },
+                {
+                    name: 'swimLanes',
+                    xtype: 'boardrowsettingsfield',
+                    fieldLabel: 'Swimlanes',
+                    margin: '10 0 0 0',
+                    mapsToMultiplePreferenceKeys: ['showRows', 'rowsField'],
+                    readyEvent: 'ready',
+                    handlesEvents: {
+                        typeselected: function(type, context) {
+                            this.refreshWithNewModelType(type, context);
                         }
                     }
                 },

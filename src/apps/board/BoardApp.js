@@ -26,8 +26,22 @@
                 types: [this.getSetting('type')],
                 attribute: this.getSetting('groupByField'),
                 context: this.getContext(),
+                rowConfig: {
+                    field: this.getSetting('rowsField'),
+                    sortDirection: 'ASC'
+                },
                 storeConfig: {
-                    filters: this._getQueryFilters()
+                    filters: this._getQueryFilters(),
+                    sorters: [
+                        {
+                            property: 'WorkProduct',
+                            direction: 'ASC'
+                        },
+                        {
+                            property: 'TaskIndex',
+                            direction: 'ASC'
+                        }
+                    ]
                 },
                 cardConfig: {
                     editable: true,
