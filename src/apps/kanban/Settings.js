@@ -16,7 +16,6 @@
         ],
 
         getFields: function(config) {
-            var alwaysSelectedValues = ['FormattedID', 'Name', 'Owner', 'BlockedReason'];
             var items = [
                 {
                     name: 'groupByField',
@@ -73,35 +72,6 @@
                 });
             }
 
-            if (!config.shouldShowColumnLevelFieldPicker) {
-                var fieldBlackList = ['DefectStatus', 'TaskStatus', 'DisplayColor', 'DragAndDropRank', 'Rank'];
-
-                if (config.isDndWorkspace === false) {
-                    _.pull(fieldBlackList, 'Rank');
-                }
-
-                items.push({
-                    name: 'cardFields',
-                    fieldLabel: 'Card Fields',
-                    xtype: 'rallyfieldpicker',
-                    modelTypes: ['userstory', 'defect'],
-                    fieldBlackList: fieldBlackList,
-                    alwaysSelectedValues: alwaysSelectedValues,
-                    listeners: {
-                        selectionchange: function(picker) {
-                            picker.validate();
-                        }
-                    },
-                    handlesEvents: {
-                        columnsettingsready: function() {
-                            if (this.picker) {
-                                this.alignPicker();
-                            }
-                        }
-                    }
-                });
-            }
-            
             items.push(
                 {
                     name: 'hideReleasedCards',
