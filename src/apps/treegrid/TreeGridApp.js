@@ -112,7 +112,6 @@
                     pageSize: 200,
                     enableHierarchy: true,
                     childPageSizeEnabled: true,
-                    useShallowFetch: context.isFeatureEnabled('COMPACT_WSAPI_REQUESTS') ? false : true,
                     fetch: this.columnNames
                 });
 
