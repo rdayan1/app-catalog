@@ -313,10 +313,6 @@
             return _.find(this.getScrollableColumns(), this._isPlaceholderColumn);
         },
 
-        _onNewlyAddedColumnReady: function () {
-            this.cmp.applyLocalFilters();
-        },
-
         _sizeButtonToColumnHeader: function (button, column) {
             button.getEl().setHeight(column.getHeaderTitle().getHeight() - 17).setStyle('margin-top', '16px');
         },

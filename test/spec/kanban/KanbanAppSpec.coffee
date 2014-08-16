@@ -138,29 +138,6 @@ describe 'Rally.apps.kanban.KanbanApp', ->
       expect(columns[0].fields).toEqual @app.getSetting('cardFields').split(',')
       expect(columns[1].fields).toEqual @app.getSetting('cardFields').split(',')
 
-  it 'should filter the board when a type checkbox is clicked', ->
-    @createApp().then =>
-      board = @app.down('rallycardboard')
-      filterSpy = @spy board, 'addLocalFilter'
-
-      # Clicking defect will uncheck it as its checked by default
-      @click(css: '.defect-type-checkbox input')
-
-      once(
-        condition: => filterSpy.calledOnce
-        description: 'filter to be called without defect'
-      ).then =>
-        args = filterSpy.getCall(0).args
-        expect(args[1]).toEqual ['hierarchicalrequirement']
-
-      @click(css: '.defect-type-checkbox input')
-      once(
-        condition: => filterSpy.calledTwice
-        description: 'filter to be called with defect'
-      ).then =>
-        args = filterSpy.getCall(1).args
-        expect(args[1]).toEqual ['defect', 'hierarchicalrequirement']
-
   it 'should contain menu options', ->
     @createApp().then =>
       options = @app.getOptions()

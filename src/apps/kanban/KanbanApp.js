@@ -8,9 +8,6 @@
             'Rally.apps.kanban.Column',
             'Rally.ui.gridboard.GridBoard',
             'Rally.ui.gridboard.plugin.GridBoardAddNew',
-            'Rally.ui.gridboard.plugin.GridBoardTagFilter',
-            'Rally.ui.gridboard.plugin.GridBoardArtifactTypeChooser',
-            'Rally.ui.gridboard.plugin.GridBoardOwnerFilter',
             'Rally.ui.gridboard.plugin.GridBoardFilterInfo',
             'Rally.ui.gridboard.plugin.BoardPolicyDisplayable',
             'Rally.ui.cardboard.plugin.ColumnPolicy',
@@ -140,16 +137,6 @@
                         checkboxConfig: {
                             boxLabel: 'Agreements'
                         }
-                    },
-                    {
-                        ptype: 'rallygridboardartifacttypechooser',
-                        artifactTypePreferenceKey: 'artifact-types',
-                        showAgreements: false
-                    },
-                    'rallygridboardtagfilter',
-                    {
-                        ptype: 'rallygridboardownerfilter',
-                        stateId: 'kanban-owner-filter-' + this.getAppId()
                     }
                 ],
                 context: this.getContext(),
