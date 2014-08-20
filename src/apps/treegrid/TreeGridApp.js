@@ -43,9 +43,9 @@
             var context = this.getContext(),
                 gridStateString = this.statePrefix + '-treegrid',
                 gridStateId = context.getScopedStateId(gridStateString),
-                gridboardPlugins = [];
+                gridboardPlugins = this._getGridBoardPlugins();
 
-            this.add({
+            this.gridboard = this.add({
                 itemId: 'gridBoard',
                 xtype: 'rallygridboard',
                 stateId: this.statePrefix + '-gridboard',
@@ -58,6 +58,10 @@
                 storeConfig: {},
                 height: this._getHeight()
             });
+        },
+
+        _getGridBoardPlugins: function() {
+            return [];
         },
 
         _getHeight: function() {
