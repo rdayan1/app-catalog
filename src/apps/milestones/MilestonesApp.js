@@ -69,7 +69,22 @@
                     recordTypes: ['Milestone'],
                     showAddWithDetails: false,
                     openEditorAfterAddFailure: false,
-                    minWidth: 800
+                    minWidth: 800,
+                    additionalFields: [
+                        {
+                            itemId: 'datePicker',
+                            xtype: 'rallydatefield',
+                            emptyText: 'Select Date',
+                            creationField: 'TargetDate'
+                        },
+                        {
+                            itemId: 'projectComboBox',
+                            xtype: 'rallymilestoneprojectcombobox',
+                            minWidth: 250,
+                            creationField: 'TargetProject',
+                            value: Rally.util.Ref.getRelativeUri(Rally.environment.getContext().getProject())
+                        }
+                    ]
                 };
             }
             return {};
