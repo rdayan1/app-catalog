@@ -12,6 +12,8 @@
             expanded: true
         },
 
+        _isLayoutRoot: true,
+
         cls: 'stat-panel',
 
         data: {},
