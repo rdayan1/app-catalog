@@ -16,6 +16,7 @@
         loadGridAfterStateRestore: false, //grid will be loaded once modeltypeschange event is fired from the type picker
 
         statePrefix: 'portfolioitems',
+        piTypeDefArray: undefined,
 
         config: {
             defaultSettings: {
@@ -41,21 +42,23 @@
         },
 
         _loadAppWithPortfolioItemType: function(piTypeDefArray) {
+            this.piTypeDefArray = piTypeDefArray;
             var allPiTypePaths = _.pluck(piTypeDefArray, 'TypePath');
             this._configureFilter(allPiTypePaths);
 
             this._loadApp(allPiTypePaths);
         },
 
-        _configureFilter: function(allPiTypePaths) {
-            var initialPiTypePath = allPiTypePaths[0];
+        _configureFilter: function(allPIModelNames) {
+            var filterControlStateId = 'portfolio-tree-custom-filter-button',
+                initialModelNames = this._getDefaultModelNames(filterControlStateId, [allPIModelNames[0]]);
 
             this.filterControlConfig = {
                 blacklistFields: ['PortfolioItemType', 'State'],
                 stateful: true,
-                stateId: this.getContext().getScopedStateId('portfolio-tree-custom-filter-button'),
+                stateId: this.getContext().getScopedStateId(filterControlStateId),
                 whiteListFields: ['Milestones'],
-                modelNames: [initialPiTypePath]
+                modelNames: initialModelNames
             };
         },
 
@@ -66,6 +69,34 @@
                 context: this.getContext()
             });
             return plugins;
+        },
+
+        _getDefaultModelNames: function(settingName, defaultArray) {
+            var modelNamesArray, typeNameArray,
+                prefValue = this.getSetting(settingName);
+
+            if (prefValue) {
+                typeNameArray = Ext.decode(prefValue).types;
+                modelNamesArray = this._convertTypesToModelNames(typeNameArray);
+            }
+
+            return modelNamesArray || defaultArray;
+        },
+
+        _convertTypesToModelNames: function(typeNameArray) {
+            if (typeNameArray && typeNameArray.length === 1) {
+                var typeModelMap = this._getTypesByNames(_.pluck(this.piTypeDefArray, 'TypePath'));
+                return typeModelMap[typeNameArray[0]];
+            }
+        },
+
+        _getTypesByNames: function(modelNames) {
+            var typeName;
+            return _.reduce(modelNames, function (typeModelMap, modelName) {
+                typeName = Rally.data.ModelTypes.getTypeByName(modelName).toLowerCase();
+                typeModelMap[typeName] = modelName;
+                return typeModelMap;
+            }, {}, this);
         }
     });
 })();
