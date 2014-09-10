@@ -97,7 +97,6 @@
             var height = 62;
             this.chart = Ext.create('Rally.ui.chart.Chart', Ext.apply({
                 loadMask: false,
-                renderTo: this.getChartEl(),
                 cls: 'gauge',
                 chartConfig: {
                     chart: {
@@ -128,6 +127,7 @@
                     }
                 }
             }, chartConfig));
+            this.cmp.add(chart);
         },
 
         getTimeboxData: function() {

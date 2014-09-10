@@ -27,6 +27,9 @@
         width: '100%',
         stateful: true,
         stateEvents: ['expand', 'collapse'],
+        defaults: {
+            flex: 1
+        },
 
         config: {
             context: null,
@@ -39,7 +42,7 @@
             {xtype: 'statsbanneraccepted'},
             {xtype: 'statsbannerdefects'},
             {xtype: 'statsbannertasks'},
-            {xtype: 'statsbanneriterationprogress', flex: 2},
+            //{xtype: 'statsbanneriterationprogress', flex: 2},
             {xtype: 'statsbannercollapseexpand', flex: 0}
         ],
 
@@ -84,6 +87,7 @@
                 limit: Infinity,
                 requester: this
             });
+
 
             //need to configure the items at the instance level, not the class level (i.e. don't use the 'defaults' config)
             this.items = this._configureItems(this.items);
