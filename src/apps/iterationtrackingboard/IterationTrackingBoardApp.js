@@ -381,7 +381,8 @@
                     'Predecessors'
                 ],
                 boardFieldBlackList: [
-                    'PredecessorsAndSuccessors'
+                    'Successors',
+                    'Predecessors'
                 ],
                 alwaysSelectedValues: alwaysSelectedValues,
                 modelNames: this.modelNames,
