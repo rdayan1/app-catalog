@@ -357,17 +357,19 @@
                 ptype: 'rallygridboardfieldpicker',
                 headerPosition: 'left',
                 gridFieldBlackList: [
-                    'ObjectID',
+                    'Changesets',
+                    'Children',
                     'Description',
                     'DisplayColor',
+                    'Estimate',
                     'Notes',
-                    'Subscription',
-                    'Workspace',
-                    'Changesets',
+                    'ObjectID',
+                    'Predecessors',
                     'RevisionHistory',
-                    'Children',
+                    'Subscription',
                     'Successors',
-                    'Predecessors'
+                    'ToDo',
+                    'Workspace'
                 ],
                 boardFieldBlackList: [
                     'PredecessorsAndSuccessors'
