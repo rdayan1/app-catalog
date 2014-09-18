@@ -5,63 +5,112 @@
         extend: 'Rally.app.App',
         requires: [
             'Rally.ui.DateField',
-            'Rally.ui.combobox.MilestoneProjectComboBox'
+            'Rally.ui.combobox.MilestoneProjectComboBox',
+            'Rally.ui.gridboard.plugin.GridBoardAddNew',
+            'Rally.ui.gridboard.plugin.GridBoardCustomFilterControl',
+            'Rally.ui.gridboard.plugin.GridBoardFieldPicker'
         ],
         cls: 'milestones-app',
 
         launch: function() {
-            var context = this.getContext();
-            this.add(Ext.create('Rally.ui.list.ListView', {
-                model: Ext.identityFn('milestone'),
-                addNewConfig: this._addNewConfig(),
-                gridConfig: {
-                    columnCfgs: [
-                        {
-                            dataIndex: 'FormattedID',
-                            renderer: function(formattedID) {
-                                return Ext.create('Rally.ui.renderer.template.FormattedIDTemplate').apply({
-                                   _type: 'milestone',
-                                   FormattedID: formattedID,
-                                   Recycled: true
-                                });
-                            }
-                        },
-                        'Name',
-                        'TargetDate',
-                        {
-                            dataIndex: 'TotalArtifactCount',
-                            text: 'Item Count',
-                            tdCls: 'artifacts'
-                        },
-                        {
-                            dataIndex: 'TargetProject',
-                            renderer: function(project) {
-                                if (project === ''){
-                                    return '<div class="permission-required">Project Permissions Required</div>';
-                                }
-                                if (project === null) {
-                                    return 'All projects in ' +  context.getWorkspace().Name;
-                                }
-                                return project.Name;
-                            },
-                            text: 'Project'
+            this._getGridStore().then({
+                success: function(gridStore) {
+                    this.addGridBoard({
+                        gridStore: gridStore
+                    });
+                },
+                scope: this
+            });
+        },
+
+        addGridBoard: function (config) {
+            this.gridboard = Ext.create('Rally.ui.gridboard.GridBoard', this._getGridBoardConfig(config));
+            this.add(this.gridboard);
+        },
+
+        _getGridStore: function() {
+            return Ext.create('Rally.data.wsapi.TreeStoreBuilder').build({
+                models: ['Milestone'],
+                autoLoad: true,
+                remoteSort: true,
+                root: {expanded: true},
+                pageSize: 200,
+                enableHierarchy: true,
+                childPageSizeEnabled: true,
+                fetch: 'FormattedID,Name,TargetDate,Artifacts,TargetProject,TotalArtifactCount'
+            });
+        },
+
+        _getGridBoardConfig: function (config) {
+            return Ext.merge({
+                itemId: 'gridboard',
+                stateId: 'milestones-gridboard',
+                toggleState: 'grid',
+                modelNames: ['Milestone'],
+                context: this.getContext(),
+                addNewPluginConfig: this._addNewConfig(),
+                plugins: ['rallygridboardaddnew',
+                    {
+                        ptype: 'rallygridboardfieldpicker',
+                        headerPosition: 'left'
+                    },
+                    {
+                        ptype: 'rallygridboardcustomfiltercontrol',
+                        filterChildren: false,
+                        filterControlConfig: {
+                            blackListFields: [],
+                            whiteListFields: [],
+                            modelNames: ['milestone'],
+                            stateful: true
                         }
-                    ],
-                    enableRanking: true,
-                    storeConfig: {
-                        fetch: 'FormattedID,Name,TargetDate,Artifacts,TargetProject,TotalArtifactCount',
-                        sorters: [{
-                            property: 'TargetDate',
-                            direction: 'DESC'
-                        }]
+                    }
+                ],
+                gridConfig: this._getGridConfig(config),
+                height: 600
+            }, config);
+        },
+
+        _getGridConfig: function (config) {
+            return {
+                xtype: 'rallytreegrid',
+                columnCfgs: [
+                    {
+                        dataIndex: 'FormattedID',
+                        renderer: function(formattedID) {
+                            return Ext.create('Rally.ui.renderer.template.FormattedIDTemplate').apply({
+                               _type: 'milestone',
+                               FormattedID: formattedID,
+                               Recycled: true
+                            });
+                        }
                     },
-                    showRowActionsColumn: false,
-                    viewConfig: {
-                        emptyText: this._getEmptyText()
+                    'Name',
+                    'TargetDate',
+                    {
+                        dataIndex: 'TotalArtifactCount',
+                        text: 'Item Count',
+                        tdCls: 'artifacts'
                     },
-                    showIcon: false
-                }
-            }));
+                    {
+                        dataIndex: 'TargetProject',
+                        renderer: function(project) {
+                            if (project === ''){
+                                return '<div class="permission-required">Project Permissions Required</div>';
+                            }
+                            if (project === null) {
+                                return 'All projects in ' +  context.getWorkspace().Name;
+                            }
+                            return project.Name;
+                        },
+                        text: 'Project'
+                    }
+                ],
+                enableBulkEdit: true,
+                enableRanking: false,
+                store: config.gridStore,
+                showRowActionsColumn: true,
+                showIcon: false
+            };
         },
 
         _addNewConfig: function() {
