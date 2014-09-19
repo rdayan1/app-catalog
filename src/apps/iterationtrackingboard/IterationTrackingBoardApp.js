@@ -194,9 +194,17 @@
         },
 
         _addGridBoard: function (gridStore) {
-            var context = this.getContext();
+            var context = this.getContext(),
+                existingGridBoard = this.down('#gridBoard'),
+                racingStripes = this.getContext().isFeatureEnabled('ADD_RACING_STRIPES_TO_ITERATION_STATUS_PAGE');
 
-            this.remove('gridBoard');
+            if (racingStripes) {
+                this.suspendLayouts(); // wait for store load to do layout
+            }
+
+            if (existingGridBoard) {
+                existingGridBoard.remove(true);
+            }
 
             this.gridboard = this.add({
                 itemId: 'gridBoard',
@@ -207,7 +215,7 @@
                 modelNames: this.modelNames,
                 cardBoardConfig: this._getBoardConfig(),
                 gridConfig: this._getGridConfig(gridStore),
-                layout: this.getContext().isFeatureEnabled('ADD_RACING_STRIPES_TO_ITERATION_STATUS_PAGE') ? 'anchor' : 'auto',
+                layout: racingStripes ? 'anchor' : 'auto',
                 storeConfig: {
                     useShallowFetch: false,
                     filters: [context.getTimeboxScope().getQueryFilter()]
@@ -226,6 +234,10 @@
                 },
                 height: Math.max(this.getAvailableGridBoardHeight(), 150)
             });
+
+            if (racingStripes) {
+                this.resumeLayouts();
+            }
         },
 
         _getBoardConfig: function() {
