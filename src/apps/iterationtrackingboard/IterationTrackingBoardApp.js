@@ -596,7 +596,8 @@
         _getGridConfig: function (gridStore) {
             var context = this.getContext(),
                 stateString = 'iteration-tracking-treegrid',
-                stateId = context.getScopedStateId(stateString);
+                stateId = context.getScopedStateId(stateString),
+                model = gridStore.model;
 
             var gridConfig = {
                 xtype: 'rallyiterationtrackingtreegrid',
@@ -607,7 +608,10 @@
                 plugins: ['rallytreegridchildpager'],
                 stateId: stateId,
                 stateful: true,
-                shouldOptimizeLayouts: this.config.optimizeFrontEndPerformanceIterationStatus
+                shouldOptimizeLayouts: this.config.optimizeFrontEndPerformanceIterationStatus,
+                storeConfig: {
+                    filters: this._filterOutStoriesWithChildren(model)
+                }
             };
 
             gridConfig.plugins.push({
@@ -630,6 +634,28 @@
             }
 
             return gridConfig;
+        },
+
+        _filterOutStoriesWithChildren: function(model) {
+            var typeDefOid = model.getArtifactComponentModel('HierarchicalRequirement').typeDefOid;
+
+            var userStoryFilter = Ext.create('Rally.data.wsapi.Filter', {
+                property: 'TypeDefOid',
+                value: typeDefOid
+            });
+
+            var noChildrenFilter = Ext.create('Rally.data.wsapi.Filter', {
+                property: 'DirectChildrenCount',
+                value: 0
+            });
+
+            var notUserStoryFilter = Ext.create('Rally.data.wsapi.Filter', {
+                property: 'TypeDefOid',
+                value: typeDefOid,
+                operator: '!='
+            });
+
+            return userStoryFilter.and(noChildrenFilter).or(notUserStoryFilter);
         },
 
         _getSummaryColumnConfig: function () {
