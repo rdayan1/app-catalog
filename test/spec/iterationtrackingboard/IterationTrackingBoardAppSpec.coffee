@@ -139,6 +139,20 @@ describe 'Rally.apps.iterationtrackingboard.IterationTrackingBoardApp', ->
 
       expect(storeCurrentPageResetStub).toHaveBeenCalledOnce()
 
+  it 'should not set shouldDisableConvertMethod when config.optimizeFrontEndPerformanceIterationStatus is falsy', ->
+    @createApp(
+      optimizeFrontEndPerformanceIterationStatus: undefined
+    ).then =>
+      expect(Rally.domain.WsapiField.shouldDisableConvertMethod).toBeFalsy()
+
+  it 'should set shouldDisableConvertMethod based on config and unset when destroying', ->
+    @createApp(
+      optimizeFrontEndPerformanceIterationStatus: true
+    ).then =>
+      expect(Rally.domain.WsapiField.shouldDisableConvertMethod).toBe(true)
+      @app.fireEvent('destroy')
+      expect(Rally.domain.WsapiField.shouldDisableConvertMethod).toBe(false)
+
   describe 'stats banner', ->
     it 'should add the stats banner by default', ->
       @createApp().then =>

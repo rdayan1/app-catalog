@@ -71,6 +71,10 @@
                 config.layout = 'anchor';
             }
 
+            if (this.getContext().isFeatureEnabled('SET_WSAPI_FIELD_CONVERT_METHOD_TO_NULL')) {
+                Rally.domain.WsapiField.shouldDisableConvertMethod = true;
+            }
+
             this.callParent(arguments);
         },
 
@@ -114,6 +118,8 @@
                     me.resumeLayouts(true);
                 }
             });
+
+            this.on('destroy', this._cleanUpToggles, this);
         },
 
         getSettingsFields: function () {
@@ -158,6 +164,12 @@
             });
 
             return fields;
+        },
+
+        _cleanUpToggles: function () {
+            if (this.getContext().isFeatureEnabled('SET_WSAPI_FIELD_CONVERT_METHOD_TO_NULL')) {
+                Rally.domain.WsapiField.shouldDisableConvertMethod = false;
+            }
         },
 
         _buildGridStore: function() {
