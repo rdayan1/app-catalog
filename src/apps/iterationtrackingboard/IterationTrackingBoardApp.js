@@ -71,7 +71,7 @@
                 config.layout = 'anchor';
             }
 
-            if (this.getContext().isFeatureEnabled('SET_WSAPI_FIELD_CONVERT_METHOD_TO_NULL')) {
+            if (Rally.environment.getContext().isFeatureEnabled('SET_WSAPI_FIELD_CONVERT_METHOD_TO_NULL')) {
                 Rally.domain.WsapiField.shouldDisableConvertMethod = true;
             }
 
