@@ -75,6 +75,14 @@
         },
 
         onScopeChange: function() {
+            if (this.getContext().isFeatureEnabled('DISABLE_BETA_TRACKING_CONTENT_FOR_TESTING')) {
+                if (Rally.BrowserTest) {
+                    Rally.BrowserTest.publishComponentReady(this);
+                }
+
+                return;
+            }
+
             if(!this.rendered) {
                 this.on('afterrender', this.onScopeChange, this, {single: true});
                 return;
@@ -196,38 +204,46 @@
         },
 
         _addGridBoard: function (gridStore) {
-            var context = this.getContext();
+            var context = this.getContext(),
+                gridBoardConfig = {
+                    itemId: 'gridBoard',
+                    xtype: 'rallygridboard',
+                    stateId: 'iterationtracking-gridboard',
+                    context: context,
+                    plugins: this._getGridBoardPlugins(),
+                    modelNames: this.modelNames,
+                    cardBoardConfig: this._getBoardConfig(),
+                    gridConfig: this._getGridConfig(gridStore),
+                    layout: this.getContext().isFeatureEnabled('ADD_RACING_STRIPES_TO_ITERATION_STATUS_PAGE') ? 'anchor' : 'auto',
+                    storeConfig: {
+                        useShallowFetch: false,
+                        filters: [context.getTimeboxScope().getQueryFilter()]
+                    },
+                    addNewPluginConfig: {
+                        style: {
+                            'float': 'left'
+                        }
+                    },
+                    listeners: {
+                        load: this._onLoad,
+                        toggle: this._onToggle,
+                        recordupdate: this._publishContentUpdatedNoDashboardLayout,
+                        recordcreate: this._publishContentUpdatedNoDashboardLayout,
+                        scope: this
+                    },
+                    height: Math.max(this.getAvailableGridBoardHeight(), 150)
+                };
 
             this.remove('gridBoard');
 
-            this.gridboard = this.add({
-                itemId: 'gridBoard',
-                xtype: 'rallygridboard',
-                stateId: 'iterationtracking-gridboard',
-                context: context,
-                plugins: this._getGridBoardPlugins(),
-                modelNames: this.modelNames,
-                cardBoardConfig: this._getBoardConfig(),
-                gridConfig: this._getGridConfig(gridStore),
-                layout: this.getContext().isFeatureEnabled('ADD_RACING_STRIPES_TO_ITERATION_STATUS_PAGE') ? 'anchor' : 'auto',
-                storeConfig: {
-                    useShallowFetch: false,
-                    filters: [context.getTimeboxScope().getQueryFilter()]
-                },
-                addNewPluginConfig: {
-                    style: {
-                        'float': 'left'
-                    }
-                },
-                listeners: {
-                    load: this._onLoad,
-                    toggle: this._onToggle,
-                    recordupdate: this._publishContentUpdatedNoDashboardLayout,
-                    recordcreate: this._publishContentUpdatedNoDashboardLayout,
-                    scope: this
-                },
-                height: Math.max(this.getAvailableGridBoardHeight(), 150)
-            });
+            if (this.getContext().isFeatureEnabled('FORCE_BOARD_FOR_BETA_TRACKING_TESTING')) {
+                gridBoardConfig.getToggleState = function() {
+                    return 'board';
+                }
+                gridBoardConfig.toggleState = 'board';
+            }
+
+            this.gridboard = this.add(gridBoardConfig);
         },
 
         _getBoardConfig: function() {
