@@ -23,9 +23,13 @@
 
         _init: function () {
             var container = this.down('#treeact-container').getEl().dom;
+            var context = this.getContext();
 
             $.getScript('http://localhost:3000/bundle.js').then(function () {
-                treeact.ui.render(container);
+                treeact.ui.mount({
+                    el: container,
+                    project: context.getProject()
+                });
             });
         }
     });
