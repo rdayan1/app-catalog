@@ -1,0 +1,10 @@
+{
+   "name": "Treeact",
+   "className": "Rally.apps.treeact.TreeactApp",
+   "server": "https://rally1.rallydev.com",
+   "sdk": "x",
+   "javascript": [
+      "TreeactApp.js"
+   ],
+   "css": []
+}

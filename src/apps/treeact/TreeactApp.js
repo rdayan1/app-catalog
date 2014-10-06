@@ -8,10 +8,9 @@
         appName: 'Treeact',
 
         launch: function() {
-            debugger
-//            this.add({
-//                html: 'HELLO, THIS IS TREEACT.'
-//            });
+            this.add({
+                html: 'HELLO, THIS IS TREEACT.'
+            });
         }
     });
 })();
