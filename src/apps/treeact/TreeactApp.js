@@ -24,7 +24,9 @@
         _init: function () {
             var container = this.down('#treeact-container').getEl().dom;
             var context = this.getContext();
+            var bootstrapUrl = 'http://localhost:3000/css/bootstrap.min.css';
 
+            $('<link rel="stylesheet" type="text/css" href="' + bootstrapUrl + '" />').appendTo($(this.getEl().dom));
             $.getScript('http://localhost:3000/bundle.js').then(function () {
                 treeact.ui.mount({
                     el: container,
