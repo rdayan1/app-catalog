@@ -30,16 +30,7 @@
                                 ];
                             }
                         },
-                        {
-                            dataIndex: 'FormattedID',
-                            renderer: function(formattedID) {
-                                return Ext.create('Rally.ui.renderer.template.FormattedIDTemplate').apply({
-                                   _type: 'milestone',
-                                   FormattedID: formattedID,
-                                   Recycled: true
-                                });
-                            }
-                        },
+                        'FormattedID',
                         'Name',
                         'TargetDate',
                         {
