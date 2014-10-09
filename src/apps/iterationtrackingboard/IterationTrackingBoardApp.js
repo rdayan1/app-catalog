@@ -98,22 +98,24 @@
                 this._addStatsBanner();
             }
 
-            this._buildGridStore().then({
-                success: function(gridStore) {
-                    var model = gridStore.model;
-                    if(_.isFunction(model.getArtifactComponentModels)) {
-                        this.modelNames = _.intersection(_.pluck(gridStore.model.getArtifactComponentModels(),'displayName'),this.modelNames);
-                    } else {
-                        this.modelNames = [model.displayName];
-                    }
-                    this._addGridBoard(gridStore);
-                },
-                scope: this
-            }).always(function() {
-                if (racingStripes) {
-                    me.resumeLayouts(true);
-                }
-            });
+            if (this._shouldShowGridBoard()) {
+              this._buildGridStore().then({
+                  success: function(gridStore) {
+                      var model = gridStore.model;
+                      if(_.isFunction(model.getArtifactComponentModels)) {
+                          this.modelNames = _.intersection(_.pluck(gridStore.model.getArtifactComponentModels(),'displayName'),this.modelNames);
+                      } else {
+                          this.modelNames = [model.displayName];
+                      }
+                      this._addGridBoard(gridStore);
+                  },
+                  scope: this
+              }).always(function() {
+                  if (racingStripes) {
+                      me.resumeLayouts(true);
+                  }
+              });
+            }
         },
 
         getSettingsFields: function () {
@@ -177,7 +179,11 @@
         },
 
         _shouldShowStatsBanner: function() {
-            return this.includeStatsBanner && this.getSetting('showStatsBanner');
+            return false;
+        },
+
+        _shouldShowGridBoard: function() {
+          return true;
         },
 
         _addStatsBanner: function() {
