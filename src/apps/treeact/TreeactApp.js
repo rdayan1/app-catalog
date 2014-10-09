@@ -30,7 +30,7 @@
             $.getScript('http://localhost:3000/bundle.js').then(function () {
                 treeact.ui.mount({
                     el: container,
-                    project: context.getProjectRef(),
+                    project: context.getProject(),
                     workspace: context.getWorkspaceRef()
                 });
             });
