@@ -34,9 +34,34 @@
 }
 
 .treeact-app .card {
-    border: 1px solid black;
+    border: 1px solid #a9a9a9;
     margin: 10px;
     padding: 10px;
+    border-top-width: 5px;
+}
+
+.treeact-app .card .field {
+    margin: 7px 0;
+}
+
+.treeact-app [class^="icon-"], .treeact-app [class*=" icon-"] {
+    color: #888;
+}
+
+.treeact-app .field.FormattedID {
+    margin: 0;
+}
+
+.treeact-app .FormattedID a {
+    font-family: NotoSansBold, Helvetica, Arial;
+}
+
+.treeact-app .card .field-label {
+     color: #666;
+ }
+
+.treeact-app .card .field-value {
+    color: #333;
 }
 
 .treeact-app .rui-gridboard-toggle {
@@ -45,6 +70,38 @@
 
 .treeact-app .rui-gridboard-toggle .primary {
     cursor: default;
+}
+
+.treeact-app .board {
+    display: table-row;
+}
+
+.treeact-app .column {
+    border-style: dotted;
+    border-width: 0 1px 0 0;
+    height: 100%;
+    /*float: left;*/
+    display: table-cell;
+    vertical-align: top;
+    background-color: #f6f6f6;
+}
+
+.treeact-app .column .column-header {
+    font-family: ProximaNovaSemiBold, Helvetica, Arial;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom-style: dotted;
+    border-bottom-width: 1px;
+    padding: 15px 0 15px 0;
+    background-color: #fff;
+}
+
+.treeact-app .column .column-body {
+}
+
+.treeact-app .column:last-child {
+    border-right-width: 0;
 }
 
 .treeact-app .btn {
