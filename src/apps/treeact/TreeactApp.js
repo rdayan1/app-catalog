@@ -24,10 +24,14 @@
         _init: function () {
             var container = this.down('#treeact-container').getEl().dom;
             var context = this.getContext();
-            var baseUrl = window.location.protocol + '//' + window.location.hostname + ':3001/'
-            var bootstrapUrl = baseUrl + 'css/bootstrap.min.css';
+            var baseUrl = window.location.protocol + '//' + window.location.hostname + ':3001/';
 
-            $('<link rel="stylesheet" type="text/css" href="' + bootstrapUrl + '" />').appendTo($(this.getEl().dom));
+            var cssFiles = ['bootstrap.min.css'];
+
+            _.each(cssFiles, function (cssFile) {
+                $('<link rel="stylesheet" type="text/css" href="' + baseUrl + '/css/' + cssFile + '" />').appendTo($(this.getEl().dom));
+            }, this);
+
             $.getScript(baseUrl + 'bundle.js').then(function () {
                 treeact.ui.mount({
                     el: container,
