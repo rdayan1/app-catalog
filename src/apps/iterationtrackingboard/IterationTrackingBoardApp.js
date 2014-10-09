@@ -53,6 +53,8 @@
         scopeType: 'iteration',
         autoScroll: false,
 
+        gridboard: null,
+
         config: {
             defaultSettings: {
                 showCardAge: true,
@@ -105,7 +107,15 @@
                     } else {
                         this.modelNames = [model.displayName];
                     }
-                    this._addGridBoard(gridStore);
+                    //when re-rendering the gridboard on update, the app size is already set so render right away.
+                    //when creating the gridboard wait for the app to be rendered so it's sizes are set, then render the gridboard with the height one time
+                    if (this.gridboard) {
+                        this._addGridBoard(gridStore);
+                    } else {
+                        this.on('boxready', function () {
+                            this._addGridBoard(gridStore);
+                        }, this, {single: true});
+                    }
                 },
                 scope: this
             }).always(function() {
@@ -186,11 +196,7 @@
                 itemId: 'statsBanner',
                 context: this.getContext(),
                 margin: '0 0 5px 0',
-                shouldOptimizeLayouts: this.config.optimizeFrontEndPerformanceIterationStatus,
-                listeners: {
-                    resize: this._resizeGridBoardToFillSpace,
-                    scope: this
-                }
+                shouldOptimizeLayouts: this.config.optimizeFrontEndPerformanceIterationStatus
            });
         },
 
@@ -205,6 +211,7 @@
                 stateId: 'iterationtracking-gridboard',
                 context: context,
                 plugins: this._getGridBoardPlugins(),
+                _isLayoutRoot: true,
                 modelNames: this.modelNames,
                 cardBoardConfig: this._getBoardConfig(),
                 gridConfig: this._getGridConfig(gridStore),
@@ -227,6 +234,9 @@
                 },
                 height: Math.max(this.getAvailableGridBoardHeight(), 150)
             });
+
+            //add event listener here because the resize event is fired a few times and we don't want to resize until here.
+            this.on('resize', this._resizeGridBoardToFillSpace, this);
         },
 
         _getGridboardFilters: function(model) {
@@ -302,8 +312,9 @@
          */
         getAvailableGridBoardHeight: function() {
             var height = this.getHeight();
-            if(this._shouldShowStatsBanner() && this.down('#statsBanner').rendered) {
-                height -= this.down('#statsBanner').getHeight();
+            var statsBanner = this.down('#statsBanner');
+            if(this._shouldShowStatsBanner() && statsBanner.rendered) {
+                height -= statsBanner.getHeight();
             }
             return height;
         },
@@ -426,10 +437,11 @@
             return plugins;
         },
 
-        setHeight: Ext.Function.createBuffered(function() {
-            this.superclass.setHeight.apply(this, arguments);
-            this._resizeGridBoardToFillSpace();
-        }, 100),
+        setHeight: function(height) {
+            this.suspendLayouts();
+            this.superclass.setHeight.apply(this, [height]);
+            this.resumeLayouts(true);
+        },
 
         _importHandler: function(options) {
             return _.bind(function() {
@@ -488,9 +500,13 @@
             return iterationId;
         },
 
-        _resizeGridBoardToFillSpace: function() {
+        _resizeGridBoardToFillSpace: function(component, width, height, oldWidth, oldHeight) {
             if (this.gridboard) {
-                this.gridboard.setHeight(this.getAvailableGridBoardHeight());
+                if (typeof height === 'undefined' || height !== oldHeight) { //only resize if the height of the impacting container has changed
+                    Ext.suspendLayouts();
+                    this.gridboard.setHeight(this.getAvailableGridBoardHeight());
+                    Ext.resumeLayouts(true);
+                }
             }
         },
 

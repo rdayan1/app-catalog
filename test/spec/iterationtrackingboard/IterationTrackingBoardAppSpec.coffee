@@ -162,13 +162,6 @@ describe 'Rally.apps.iterationtrackingboard.IterationTrackingBoardApp', ->
       @createApp(includeStatsBanner: false).then =>
         expect(@app.down('#statsBanner')).toBeNull()
 
-    it 'should resize the grid board when stats banner is toggled', ->
-      @createApp().then =>
-        statsBanner = @app.down '#statsBanner'
-        setHeightSpy = @spy @app.down('rallygridboard'), 'setHeight'
-        statsBanner.setHeight 40
-        @waitForCallback(setHeightSpy)
-
   it 'fires contentupdated event after board load', ->
     contentUpdatedHandlerStub = @stub()
     @createApp(
@@ -382,6 +375,18 @@ describe 'Rally.apps.iterationtrackingboard.IterationTrackingBoardApp', ->
         @app.setHeight @app.getHeight() + 10
         @waitForCallback(setHeightSpy).then =>
           expect(gridBoard.getHeight()).toBe currentHeight + 10
+
+    it 'should not update the grid or board height if the height did not change', ->
+      @createApp().then =>
+        gridBoard = @app.down 'rallygridboard'
+        setHeightSpy = @spy gridBoard, 'setHeight'
+        currentHeight = gridBoard.getHeight()
+        currentWidth = gridBoard.getWidth()
+        @app.fireEvent('resize', @app, currentWidth, currentHeight, currentWidth, currentHeight)
+        setTimeout expect(setHeightSpy).not.toHaveBeenCalled(), 500
+        # sucks to use a setTimeout, but the fireEvent is async and the listener is a) private and
+        #  b) deferred so even if I wanted to spy it, it doesn't seem to be available.
+
 
   describe 'custom filter popover', ->
     beforeEach ->
