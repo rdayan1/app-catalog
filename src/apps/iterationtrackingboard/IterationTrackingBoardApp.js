@@ -54,6 +54,7 @@
         autoScroll: false,
 
         gridboard: null,
+        initialHeightSet: 0,
 
         config: {
             defaultSettings: {
@@ -73,6 +74,20 @@
             }
 
             this.callParent(arguments);
+        },
+
+        initComponent: function() {
+            debugger;
+            this.addEvents([
+                /**
+                 * @event
+                 * Fired the first time the height is set.
+                 *
+                 * @param {Ext.Component} this
+                 */
+                'initialheightset'
+            ]);
+            this.callParent([]);
         },
 
         onScopeChange: function() {
@@ -112,8 +127,9 @@
                     if (this.gridboard) {
                         this._addGridBoard(gridStore);
                     } else {
-                        this.on('boxready', function () {
+                        this.on('initialheightset', function () {
                             this._addGridBoard(gridStore);
+                            this.on('resize', this._resizeGridBoardToFillSpace, this);
                         }, this, {single: true});
                     }
                 },
@@ -211,7 +227,6 @@
                 stateId: 'iterationtracking-gridboard',
                 context: context,
                 plugins: this._getGridBoardPlugins(),
-                _isLayoutRoot: true,
                 modelNames: this.modelNames,
                 cardBoardConfig: this._getBoardConfig(),
                 gridConfig: this._getGridConfig(gridStore),
@@ -235,8 +250,7 @@
                 height: Math.max(this.getAvailableGridBoardHeight(), 150)
             });
 
-            //add event listener here because the resize event is fired a few times and we don't want to resize until here.
-            this.on('resize', this._resizeGridBoardToFillSpace, this);
+
         },
 
         _getGridboardFilters: function(model) {
@@ -312,9 +326,8 @@
          */
         getAvailableGridBoardHeight: function() {
             var height = this.getHeight();
-            var statsBanner = this.down('#statsBanner');
-            if(this._shouldShowStatsBanner() && statsBanner.rendered) {
-                height -= statsBanner.getHeight();
+            if(this._shouldShowStatsBanner() && this.down('#statsBanner').rendered) {
+                height -= this.down('#statsBanner').getHeight();
             }
             return height;
         },
@@ -437,10 +450,16 @@
             return plugins;
         },
 
-        setHeight: function(height) {
+        setHeight: function() {
+            console.log('setHeight');
             this.suspendLayouts();
-            this.superclass.setHeight.apply(this, [height]);
+            this.superclass.setHeight.apply(this, arguments);
             this.resumeLayouts(true);
+            this.initialHeightSet++;
+            console.log(this.initialHeightSet);
+            if (this.initialHeightSet === 2) {
+                this.fireEvent('initialheightset', this);
+            }
         },
 
         _importHandler: function(options) {
@@ -501,6 +520,7 @@
         },
 
         _resizeGridBoardToFillSpace: function(component, width, height, oldWidth, oldHeight) {
+            console.log('resizeGridBoard');
             if (this.gridboard) {
                 if (typeof height === 'undefined' || height !== oldHeight) { //only resize if the height of the impacting container has changed
                     Ext.suspendLayouts();

@@ -27,8 +27,6 @@
         width: '100%',
         stateful: true,
         stateEvents: ['expand', 'collapse'],
-        expandedHeight: 120, //use these instead of getHeight
-        collapsedHeight: 35, //use these instead of getHeight
 
         config: {
             context: null,
@@ -126,18 +124,6 @@
             return {
                 expanded: this.expanded
             };
-        },
-
-        getHeight: function (beBad) {
-            if (beBad) {
-                //revert to native functionality (which isnt as performant)
-                return this.callParent([]);
-            }
-            if (this.expanded) {
-                return this.expandedHeight;
-            } else {
-                return this. collapsedHeight;
-            }
         },
 
         _setExpandedOnChildItems: function () {
