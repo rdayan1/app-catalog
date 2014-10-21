@@ -215,11 +215,7 @@
         },
 
         getGridPlugins: function () {
-            var plugins = [];
-            if (this.persistExpansionState) {
-                plugins.push('rallytreegridexpandedrowpersistence');
-            }
-            return plugins;
+            return this.persistExpansionState ? ['rallytreegridexpandedrowpersistence'] : [];
         },
 
         getAddNewConfig: function () {
