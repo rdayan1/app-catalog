@@ -26,7 +26,6 @@
             'Rally.ui.cardboard.plugin.ColumnPolicy',
             'Rally.ui.gridboard.plugin.GridBoardToggleable',
             'Rally.ui.grid.plugin.TreeGridExpandedRowPersistence',
-            'Rally.ui.grid.plugin.TreeGridChildPager',
             'Rally.ui.gridboard.plugin.GridBoardExpandAll',
             'Rally.ui.gridboard.plugin.GridBoardCustomView',
             'Rally.ui.filter.view.ModelFilter',
@@ -615,7 +614,7 @@
                         defaultSelectionPosition: 'last'
                     }
                 },
-                plugins: ['rallytreegridchildpager'],
+                plugins: [],
                 stateId: stateId,
                 stateful: true,
                 shouldOptimizeLayouts: this.config.optimizeFrontEndPerformanceIterationStatus,
