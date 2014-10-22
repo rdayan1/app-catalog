@@ -107,7 +107,8 @@
                         ptype: 'rallygridboardfieldpicker',
                         headerPosition: 'left',
                         modelNames: modelNames,
-                        boardFieldDefaults: ['Estimate', 'ToDo']
+                        boardFieldDefaults: ['Estimate', 'ToDo'],
+                        boardFieldBlackList: ['State']
                     }
                 ],
                 context: context,

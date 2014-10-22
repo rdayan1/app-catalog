@@ -65,6 +65,7 @@ describe 'Rally.apps.taskboard.TaskBoardApp', ->
           expect(plugin.headerPosition).toBe 'left'
           expect(plugin.modelNames).toEqual ['Task']
           expect(plugin.boardFieldDefaults).toEqual ['Estimate', 'ToDo']
+          expect(plugin.boardFieldBlackList).toContain 'State'
 
   describe '#hideAcceptedWork', ->
     it 'has the correct default settings', ->
